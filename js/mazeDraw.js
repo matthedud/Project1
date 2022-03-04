@@ -5,6 +5,7 @@ const canvasHeight = 500
 const moveSpeed = 10
 const turnSpeed = 0.2
 const playerSize = 15
+let bulletCounter = 0
 
 const squareMaze1 = [
 	[1, 1, 1, 1, 1, 1, 1, 1],
@@ -68,24 +69,49 @@ class Player {
 				}
 				break
 			case "ArrowDown":
-			case "sz":
-				newXposition =
-					this.xPosition - Math.cos(this.direction) * moveSpeed
-				newYposition =
-					this.yPosition + Math.sin(this.direction) * moveSpeed
+			case "s":
+				newXposition = this.xPosition - Math.cos(this.direction) * moveSpeed
+				newYposition = this.yPosition + Math.sin(this.direction) * moveSpeed
 				if (!maze.isWall(newXposition, newYposition)) {
 					this.xPosition = newXposition
 					this.yPosition = newYposition
 				}
 				break
 		}
+		maze.clearCanvas()
+		maze.drawMaze()
+	}
+}
+
+class Bullet {
+	constructor({xPosition, yPosition, direction}, id) {
+		this.xPosition = xPosition
+		this.yPosition = yPosition
+		this.direction = direction
+		this.id = id
+	}
+	move(maze) {
+		newXposition = this.xPosition + Math.cos(this.direction) * moveSpeed
+		newYposition = this.yPosition - Math.sin(this.direction) * moveSpeed
+		if (!maze.isWall(newXposition, newYposition)) {
+      this.xPosition = newXposition
+      this.yPosition = newYposition
+			maze.clearCanvas()
+			maze.drawMaze()
+      this.move(maze)
+		}
+    else {
+      const bulletIndex = maze.bullets.findIndex(el=>el.id = this.id)
+      maze.bullets.splice(bulletIndex, 1)
+    }
 	}
 }
 
 class Maze {
-	constructor(grid2D, players) {
+	constructor(grid2D, players, bullets) {
 		this.grid2D = grid2D
 		this.players = players
+		this.bullets = bullets
 		this.cellWidth = canvasWidth / grid2D[0].length
 		this.cellheight = canvasHeight / grid2D.length
 	}
@@ -126,6 +152,7 @@ game.drawMaze()
 document.addEventListener("keydown", movePlayer)
 
 function movePlayer(event) {
+	console.log(event.key)
 	if (
 		event.key === "ArrowRight" ||
 		event.key === "ArrowLeft" ||
@@ -142,6 +169,14 @@ function movePlayer(event) {
 	) {
 		player2.move(event.key, game)
 	}
-	game.clearCanvas()
-	game.drawMaze()
+	if (event.key === "Shift"){
+    bulletCounter++
+    const bullet = new Bullet({...player2}, bulletCounter)
+    bullet.shoot(game)
+  }
+	if (event.key === "Control"){
+    bulletCounter++
+    const bullet = new Bullet({...player1}, bulletCounter)
+    bullet.shoot(game)
+  }
 }
