@@ -90,9 +90,26 @@ class Bullet {
 		this.direction = direction
 		this.id = id
 	}
+  draw(){
+    const xDirection =
+			this.xPosition + Math.cos(this.direction) * playerSize
+		const yDirection =
+			this.yPosition - Math.sin(this.direction) * playerSize
+		ctx.fillStyle = this.color
+		ctx.strokeStyle = "green"
+		ctx.beginPath()
+		ctx.arc(this.xPosition, this.yPosition, playerSize, 0, 2 * Math.PI)
+		ctx.closePath()
+		ctx.fill()
+		ctx.beginPath()
+		ctx.moveTo(this.xPosition, this.yPosition)
+		ctx.lineTo(xDirection, yDirection)
+		ctx.closePath()
+		ctx.stroke()
+  }
 	move(maze) {
-		newXposition = this.xPosition + Math.cos(this.direction) * moveSpeed
-		newYposition = this.yPosition - Math.sin(this.direction) * moveSpeed
+		const newXposition = this.xPosition + Math.cos(this.direction) * moveSpeed
+		const newYposition = this.yPosition - Math.sin(this.direction) * moveSpeed
 		if (!maze.isWall(newXposition, newYposition)) {
       this.xPosition = newXposition
       this.yPosition = newYposition
@@ -111,7 +128,7 @@ class Maze {
 	constructor(grid2D, players, bullets) {
 		this.grid2D = grid2D
 		this.players = players
-		this.bullets = bullets
+		this.bullets = []
 		this.cellWidth = canvasWidth / grid2D[0].length
 		this.cellheight = canvasHeight / grid2D.length
 	}
@@ -126,6 +143,9 @@ class Maze {
 		})
 		this.players.forEach((player) => {
 			player.draw()
+		})
+    this.bullets.forEach((bullet) => {
+			bullet.draw()
 		})
 	}
 	drawWall(cellInd, lineInd) {
@@ -172,11 +192,13 @@ function movePlayer(event) {
 	if (event.key === "Shift"){
     bulletCounter++
     const bullet = new Bullet({...player2}, bulletCounter)
-    bullet.shoot(game)
+    game.bullets.push(bullet)
+    bullet.move(game)
   }
 	if (event.key === "Control"){
     bulletCounter++
     const bullet = new Bullet({...player1}, bulletCounter)
-    bullet.shoot(game)
+    game.bullets.push(bullet)
+    bullet.move(game)
   }
 }
