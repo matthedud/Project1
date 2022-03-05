@@ -1,6 +1,7 @@
 const canvas = document.getElementById("maze-game")
 const ctx = canvas.getContext("2d")
 let bulletCounter = 0
+const numberOfRays = 200
 
 const maze1 = [
 	[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -165,16 +166,16 @@ function renderScene(rays) {
 		console.log("RAY", distance)
 		const wallHeight = ((cellSize * 5) / ray.distance) * 277
 		ctx.fillStyle = ray.vertical ? "red" : "green"
-		ctx.fillRect(i, canvasHeight / 2 - wallHeight / 2, 1, wallHeight)
+		ctx.fillRect(i, canvasHeight / 2 - wallHeight / 2, canvasWidth/numberOfRays, wallHeight)
 		ctx.fillStyle = "yellow"
 		ctx.fillRect(
 			i,
 			canvasHeight / 2 + wallHeight / 2,
-			1,
+			canvasWidth/numberOfRays,
 			canvasHeight / 2 - wallHeight / 2
 		)
 		ctx.fillStyle = "blue"
-		ctx.fillRect(i, 0, 1, canvasHeight / 2 - wallHeight / 2)
+		ctx.fillRect(i, 0, canvasWidth/numberOfRays, canvasHeight / 2 - wallHeight / 2)
 	})
 }
 
@@ -186,7 +187,6 @@ function fixFishEye(distance, angle, playerAngle){
 
 function getRay() {
 	const initialAngle = player1.direction - FOV / 2
-	const numberOfRays = canvasWidth
 	const angleStep = FOV / numberOfRays
 	return Array.from({ length: numberOfRays }, (_, i) => {
 		const angle = initialAngle + i * angleStep

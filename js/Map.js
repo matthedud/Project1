@@ -1,6 +1,6 @@
 const canvasWidth = 1000
 const canvasHeight = 500
-const scale = 0.3
+const scale = 1
 
 class Maze {
 	constructor(grid2D, players) {
