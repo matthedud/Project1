@@ -161,7 +161,7 @@ function getHCollision(angle) {
 
 function renderScene(rays) {
 	rays.forEach((ray, i) => {
-		const distance = fixFishEye(ray.distance, ray.angle, player1.angle)
+		const distance = fixFishEye(ray.distance, ray.angle, player1.direction)
 		console.log("RAY", distance)
 		const wallHeight = ((cellSize * 5) / ray.distance) * 277
 		ctx.fillStyle = ray.vertical ? "red" : "green"
