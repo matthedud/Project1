@@ -1,7 +1,9 @@
 const playerSize = 15
 const turnSpeed = 0.1
 const moveSpeed = 5
-// const FOV = toRadiants(60)
+// const FOV = toRadiants(0.5)
+const FOV = (0.01)
+const cellSize = 10
 
 class Player {
 	constructor(name, xPosition, yPosition, direction, color) {
@@ -66,23 +68,21 @@ class Player {
 		} else {
 			this.resetMove()
 		}
-		maze.clearCanvas()
-		maze.drawMaze()
 	}
-	setRotate(key, maze) {
+	setRotate(key) {
 		if (!this.rotateState) {
 			switch (key) {
 				case "ArrowRight":
 				case "d":
 					this.rotateState = setInterval(
-						() => this.rotate(maze, -turnSpeed),
+						() => this.rotate(-turnSpeed),
 						20
 					)
 					break
 				case "ArrowLeft":
 				case "q":
 					this.rotateState = setInterval(
-						() => this.rotate(maze, turnSpeed),
+						() => this.rotate(turnSpeed),
 						20
 					)
 					break
@@ -93,86 +93,11 @@ class Player {
 		clearInterval(this.rotateState)
 		this.rotateState = null
 	}
-	rotate(maze, newRotate) {
+	rotate(newRotate) {
 		this.direction += newRotate
-		maze.clearCanvas()
-		maze.drawMaze()
 	}
-  getRay() {
-    const initialAngle = this.direction - FOV / 2
-    const numberOfRays = canvasWidth
-    const angleStep = FOV / numberOfRays
-    return Array.from({ length: numberOfRays }, (_, i) => {
-      const angle = initialAngle + i * angleStep
-      const ray = castRay(angle)
-    })
-  }
-  getVCollision(angle) {
-    const right = Math.abs(Math.floor((angle - Math.PI / 2) / Math.PI) % 2)
-    const firstX = right
-      ? Math.floor(player.xPosition / cellSize) * cellSize + cellSize
-      : Math.floor(player.xPosition / cellSize) * cellSize
-    const firstY = player.yPosition + (firstX - player.x) * Math.tan(angle)
-    const xA = right ? cellSize : - cellSize
-    const yA = xA * Math.tan(angle)
-    let wall
-    let nextX = firstX
-    let nextY = firstY
-    while (!Wall) {
-      const cellX = right
-        ? Math.floor(nextX / cellSize)
-        : Math.floor(nextX / cellSize) - 1
-      const cellY = Math.floor(nextY / cellSize)
-      if (outOfBounds(cellX, cellY)) {
-        break
-      }
-      wall = map[cellY][cellX]
-      if (!wall) {
-        nextX = xA
-        nextY = yA
-      }
-    }
-    return {
-      angle,
-      distance: distance(player.xPosition, player.yPosition, nextX, nextY),
-      vertical: true,
-    }
-  }
-  getHCollision(angle) {
-    const up = Math.abs(Math.floor(angle / Math.PI) % 2)
-  
-    const firstY = up
-      ? Math.floor(player.yPosition / cellSize) * cellSize
-      : Math.floor(player.yPosition / cellSize) * cellSize + cellSize
-  
-    const firstX =
-      player.xPosition + (firstY - player.yPosition) / Math.tan(angle)
-  
-    const yA = up ? -cellSize : cellSize
-    const xA = yA / Math.tan(angle)
-  
-    let wall
-    let nextX = firstX
-    let nextY = firstY
-    while (!Wall) {
-      const cellX = Math.floor(nextX / cellSize)
-      const cellY = up
-        ? Math.floor(nextY / cellSize) - 1
-        : Math.floor(nextY / cellSize)
-  
-      if (outOfBounds(cellX, cellY)) {
-        break
-      }
-      wall = map[cellY][cellX]
-      if (!wall) {
-        nextX = xA
-        nextY = yA
-      }
-    }
-    return {
-      angle,
-      distance: distance(player.xPosition, player.yPosition, nextX, nextY),
-      vertical: false,
-    }
-  }  
+
 }
+
+
+

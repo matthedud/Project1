@@ -35,8 +35,6 @@ class Bullet {
 				(el) => (el.id = this.id)
 			)
 			maze.bullets.splice(bulletIndex, 1)
-			maze.clearCanvas()
-			maze.drawMaze()
 		}
 	}
 }

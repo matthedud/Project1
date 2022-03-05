@@ -1,16 +1,14 @@
 const canvasWidth = 1000
 const canvasHeight = 500
+const scale = 0.3
 
 class Maze {
 	constructor(grid2D, players) {
 		this.grid2D = grid2D
 		this.players = players
 		this.bullets = []
-		this.cellWidth = canvasWidth / grid2D[0].length
-		this.cellheight = canvasHeight / grid2D.length
-	}
-	clearCanvas() {
-		ctx.clearRect(0, 0, canvasWidth, canvasHeight)
+		this.cellWidth = (scale * canvasWidth) / grid2D[0].length
+		this.cellheight = (scale * canvasHeight) / grid2D.length
 	}
 	drawMaze() {
 		this.grid2D.forEach((line, lineInd) => {
@@ -26,10 +24,13 @@ class Maze {
 		})
 	}
 	drawWall(cellInd, lineInd) {
-		const x = cellInd * this.cellWidth
+		const x =
+			cellInd * this.cellWidth +
+			canvasWidth / 2 -
+			(scale * canvasWidth) / 2
 		const y = lineInd * this.cellheight
 		ctx.beginPath()
-		ctx.fillStyle = "blue"
+		ctx.fillStyle = "green"
 		ctx.fillRect(x, y, this.cellWidth, this.cellheight)
 	}
 	isWall(x, y) {
@@ -54,6 +55,4 @@ class Maze {
 		}
 		return false
 	}
-
 }
-
