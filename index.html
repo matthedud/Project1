@@ -8,8 +8,33 @@
 		<link rel="stylesheet" href="./styles/app.css" />
 	</head>
 	<body>
-		<h1>The Game</h1>
-		<div id="game"></div>		
+		<header>
+			<h1>The Game</h1>
+			<button id="btn-settings">Settings</button>
+		</header>
+		<div id="game"></div>
+		<form action="" class="modal">
+			<h1>Settings</h1>
+			<label for="player1Name">Player 1 Name</label>
+			<input type="text" id="player1Name" class="text-input" required />
+			<label for="player2Name">Player 2 Name</label>
+			<input type="text" id="player2Name" class="text-input" required />
+			<label for="map">Select Map</label>
+			<select id="map" type="text" required>
+				<option value="1">Map 1</option>
+				<option value="2">Map 2</option>
+				<option value="3">Map 3</option>
+			</select>
+			<label for="game-choice">Select Game</label>
+			<select id="game-choice" type="text" required>
+				<option value="1">Tag</option>
+				<option value="2">Shooter</option>
+			</select>
+			<button id="btn-rst" type="submit" value="Submit">
+				restart game
+			</button>
+			<button id="btn-cl">Cancel</button>
+		</form>
 		<script src="./js/Bullet.js"></script>
 		<script src="./js/Player.js"></script>
 		<script src="./js/mapDataBase.js"></script>

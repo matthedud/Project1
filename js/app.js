@@ -1,5 +1,5 @@
 const parentEl = document.getElementById("game")
-const canvasWidth = 1000
+const canvasWidth = 1300
 const canvasHeight = 500
 
 const canvas = document.createElement("canvas")
@@ -13,12 +13,12 @@ parentEl.appendChild(canvas)
 const numberOfRays = canvasWidth / 2
 let playerRays = {}
 const colors = {
-	floor: "yellow",
+	floor: "rgb(64, 64, 77)",
 	wall: "#013aa6",
 	wallDark: "#012975",
 	rays: "#ffa600",
-	minimapFloor: "white",
-	minimapWall: "green",
+	minimapFloor: "rgba(88, 88, 252, 0.3)",
+	minimapWall: "rgba(0, 0, 146, 0.657)",
 	bullet: "black",
 	player: "purple",
 }
@@ -26,7 +26,7 @@ const colors = {
 const player1 = new Player("Bob", 190, 100, Math.PI, "pink", 0)
 const player2 = new Player("Bill", 50, 100, 0, "red", 1)
 
-const game = new Maze(maze2, [player1, player2])
+const game = new Maze(maze[1], [player1, player2])
 
 function movePlayer(event) {
 	if (event.key === "ArrowRight" || event.key === "ArrowLeft")
@@ -118,7 +118,7 @@ function getVCollision(angle, player, i) {
 	return {
 		angle,
 		distance: distance(player.xPosition, player.yPosition, nextX, nextY),
-		xOffset:(nextY % game.cellheight)/game.cellheight,
+		xOffset: (nextY % game.cellheight) / game.cellheight,
 		vertical: true,
 		player,
 	}
@@ -172,7 +172,7 @@ function getHCollision(angle, player, i) {
 	return {
 		angle,
 		distance: distance(player.xPosition, player.yPosition, nextX, nextY),
-		xOffset: (nextX % game.cellheight)/game.cellheight,
+		xOffset: (nextX % game.cellheight) / game.cellheight,
 		vertical: false,
 		player,
 	}
@@ -185,7 +185,12 @@ function castRay(angle, player, i) {
 
 function renderScene(rays) {
 	const wallImage = new Image()
-	wallImage.src =  "./Image/brick-wall-orange-wallpaper-patter_53876-138604.jpg"
+	// wallImage.src =  "./Image/brick-wall-orange-wallpaper-patter_53876-138604.jpg"
+	// wallImage.src =  "./Image/bricks_13/arroway.de_bricks+13_d100.jpg"
+	wallImage.src = "./Image/WM_BrickWork-50_1024/WM_BrickWork-50_1024.png"
+	const floorImage = new Image()
+	floorImage.src =
+		"./Image/FloorTreadPattern-3v2_UR_1024/FloorTreadPattern-3v2_UR_1024.png"
 
 	rays.forEach((ray, i) => {
 		const distance = fixFishEye(
@@ -194,13 +199,11 @@ function renderScene(rays) {
 			ray.player.direction
 		)
 		const wallHeight = ((game.cellheight * 5) / distance) * 277
-		ctx.fillStyle = ray.vertical
-			? colors.wall
-			: colors.wallDark
+		ctx.fillStyle = ray.vertical ? colors.wall : colors.wallDark
 
 		ctx.drawImage(
 			wallImage,
-			(ray.xOffset)*wallImage.width,
+			ray.xOffset * wallImage.width,
 			0,
 			1,
 			wallImage.height,
@@ -210,13 +213,18 @@ function renderScene(rays) {
 			wallHeight
 		)
 
-		// ctx.fillRect(
-		// 	i,
-		// 	canvasHeight / 2 - wallHeight / 2,
-		// 	canvasWidth / numberOfRays,
-		// 	wallHeight
-		// )
 		ctx.fillStyle = colors.floor
+		// ctx.drawImage(
+		// 	floorImage,
+		// 	(ray.xOffset)*floorImage.width,
+		// 	0,
+		// 	1,
+		// 	floorImage.height,
+		// 	i,
+		// 	canvasHeight / 2 + wallHeight / 2,
+		// 	canvasWidth / numberOfRays,
+		// 	canvasHeight / 2 - wallHeight / 2
+		// )
 		ctx.fillRect(
 			i,
 			canvasHeight / 2 + wallHeight / 2,
@@ -224,6 +232,8 @@ function renderScene(rays) {
 			canvasHeight / 2 - wallHeight / 2
 		)
 	})
+	ctx.fillStyle = "black"
+	ctx.fillRect(canvasWidth/2 - 3, 0, 6, canvasHeight)
 	const gunMan = new Image()
 	gunMan.src = "./Image/drunken_duck_soldier_silhouette.svg"
 	ctx.fillStyle = colors.player

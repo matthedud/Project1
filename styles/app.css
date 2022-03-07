@@ -8,14 +8,52 @@ body{
     flex-direction: column;
     justify-content: center;
     align-content: center;
+    background: url('../Image/WM_Marble-125_1024/WM_Marble-125_1024.png');
 }
 
 #game{
     width: 100%;
     height: 100%;
+    display: flex;
+    justify-content: center;
+    align-content: center;
 }
 
 canvas{
-    border: 1px black solid ;
+    border: 5px black solid ;
     background: url('../Image/panorama_landscapes_175/panorama_landscapes_175.jpg');
+}
+
+.modal{
+    display: flex;
+    flex-direction: column;
+    visibility: hidden;
+    /* position: absolute; */
+    width: 70vw;
+    max-width: 500px;
+    min-width: 200px;
+    padding: 25px;
+    border: 1px black solid ;
+    background-color: antiquewhite;
+}
+
+.modal.visible{
+    visibility: visible;
+}
+form select, form input, form button{
+    margin-bottom: 10px;
+    height: 2rem;
+}
+form button{
+    margin: 5px;
+}
+
+header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+#btn-settings{
+    width: 10rem;
 }
