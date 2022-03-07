@@ -9,11 +9,11 @@ const colors = {
 	minimapFloor: "white",
 	minimapWall: "green",
 	bullet: "black",
-	player: "green",
+	player: "purple",
 }
 
-const player1 = new Player("Bill", 100, 100, 0, "red")
-const player2 = new Player("Bob", 200, 110, 0, "pink")
+const player1 = new Player("Bob", 200, 110, 0, "pink")
+const player2 = new Player("Bill", 100, 100, 0, "red")
 
 const game = new Maze(maze1, [player1, player2])
 
@@ -73,10 +73,11 @@ function getVCollision(angle, player) {
 
 	const xStep = right ? game.cellWidth : -game.cellWidth
 	const yStep = xStep * Math.tan(angle)
+	let isPlayer
 	let wall
 	let nextX = firstX
 	let nextY = firstY
-	while (!wall) {
+	while (!wall && !isPlayer) {
 		const cellX = right
 			? Math.floor(nextX / game.cellWidth)
 			: Math.floor(nextX / game.cellWidth) - 1
@@ -84,6 +85,7 @@ function getVCollision(angle, player) {
 		if (outOfBounds(cellX, cellY)) {
 			break
 		}
+		isPlayer = game.isPlayer(nextX, nextY, player)
 		wall = game.grid2D[cellY][cellX]
 		if (!wall) {
 			nextX += xStep
@@ -124,7 +126,7 @@ function getHCollision(angle, player) {
 		if (outOfBounds(cellX, cellY)) {
 			break
 		}
-		// isPlayer = game.isPlayer(nextX, nextY)
+		isPlayer = game.isPlayer(nextX, nextY, player)
 		wall = game.grid2D[cellY][cellX]
 		if (!wall) {
 			nextX += xStep
@@ -186,6 +188,22 @@ function renderScene(rays) {
 			canvasHeight / 2 - wallHeight / 2
 		)
 	})
+	const gunImage = new Image()
+	gunImage.src = "./Image/gun.png"
+	ctx.drawImage(
+		gunImage,
+		canvasWidth / 4,
+		3*canvasHeight / 5,
+		canvasWidth / 5,
+		canvasWidth / 5
+	)
+	ctx.drawImage(
+		gunImage,
+		(3 * canvasWidth) / 4,
+		3*canvasHeight / 5,
+		canvasWidth / 5,
+		canvasWidth / 5
+	)
 }
 
 function fixFishEye(distance, angle, playerAngle) {

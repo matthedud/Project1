@@ -69,7 +69,7 @@ class Maze {
 			setTimeout(() => (player.canShoot = true), 500)
 		}
 	}
-	isPlayer(x, y) {
+	isPlayer(x, y, viewingPlayer) {
 		for (const player of this.players) {
 			if (
 				x > player.xPosition - playerSize &&
@@ -77,7 +77,8 @@ class Maze {
 				y > player.yPosition - playerSize &&
 				y < player.yPosition + playerSize
 			) {
-				return player
+				if (viewingPlayer?.id !== player.id)
+					return player
 			}
 		}
 		return false

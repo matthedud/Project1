@@ -7,6 +7,7 @@ const cellSize = 10
 
 class Player {
 	constructor(name, xPosition = 0, yPosition = 0, direction = 0, color) {
+		this.id = name
 		this.name = name
 		this.xPosition = xPosition
 		this.yPosition = yPosition
@@ -76,21 +77,24 @@ class Player {
 	controlerMove(maze) {
 		if (this.controllerIndex !== null) {
 			const gp = navigator.getGamepads()[this.controllerIndex]
-			const newXposition =
-				this.xPosition + Number(gp.axes[0].toFixed(1)) * moveSpeed
-			const newYposition =
-				this.yPosition + Number(gp.axes[1].toFixed(1)) * moveSpeed
-			if (!maze.isWall(newXposition, newYposition)) {
-				this.xPosition = newXposition
-				this.yPosition = newYposition
-			}
-			this.direction = Math.atan2(gp.axes[3], gp.axes[2])
+			// console.log(' Number(gp.axes[0]', Number(gp.axes[0].toFixed(1)));
+			const newXposition = -Math.cos(this.direction) * moveSpeed * Number((gp.axes[1]*5).toFixed(1))
+			const newYposition = -Math.sin(this.direction) * moveSpeed * Number((gp.axes[1]*5).toFixed(1))
+			// const xStrafe = -Math.sin(this.direction) * moveSpeed * Number((gp.axes[0]).toFixed(1))
+			// const yStrafe = -Math.cos(this.direction) * moveSpeed * Number((gp.axes[0]).toFixed(1))
+			this.move(maze, newXposition, newYposition )
+			// this.move(maze,  xStrafe, yStrafe )
+			const newRotate = turnSpeed * gp.axes[2]*2
+			this.rotate(newRotate, maze) 
+			// this.direction = Math.atan2(gp.axes[3], gp.axes[2])
 			if (gp.buttons[7].pressed) game.shoot(this)
 		}
 	}
 	resetMove() {
-		clearInterval(this.moveState.interval)
-		this.moveState = null
+		if(this.moveState?.interval){
+			clearInterval(this.moveState.interval)
+			this.moveState = null
+		}
 	}
 	move(maze, xMove, yMove) {
 		if (!maze.isWall(this.xPosition + xMove, this.yPosition + yMove)) {
