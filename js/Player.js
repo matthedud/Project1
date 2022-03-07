@@ -6,8 +6,9 @@ const FOV = 0.7
 const cellSize = 10
 
 class Player {
-	constructor(name, xPosition = 0, yPosition = 0, direction = 0, color) {
+	constructor(name, xPosition = 0, yPosition = 0, direction = 0, color, index=0) {
 		this.id = name
+		this.index = index
 		this.name = name
 		this.xPosition = xPosition
 		this.yPosition = yPosition

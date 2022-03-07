@@ -1,6 +1,7 @@
 const canvas = document.getElementById("maze-game")
 const ctx = canvas.getContext("2d")
 const numberOfRays = canvasWidth / 2
+let playerRays = {}
 const colors = {
 	floor: "yellow",
 	wall: "#013aa6",
@@ -12,8 +13,8 @@ const colors = {
 	player: "purple",
 }
 
-const player1 = new Player("Bob", 200, 110, 0, "pink")
-const player2 = new Player("Bill", 100, 100, 0, "red")
+const player1 = new Player("Bob", 200, 100, Math.PI, "pink", 0)
+const player2 = new Player("Bill", 100, 100, 0, "red", 1)
 
 const game = new Maze(maze1, [player1, player2])
 
@@ -61,7 +62,7 @@ function distance(x1, y1, x2, y2) {
 	return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
 }
 
-function getVCollision(angle, player) {
+function getVCollision(angle, player, i) {
 	const right = Math.abs(Math.floor((angle - Math.PI / 2) / Math.PI) % 2)
 	const firstX = right
 		? Math.floor(player.xPosition / game.cellWidth) * game.cellWidth +
@@ -73,11 +74,10 @@ function getVCollision(angle, player) {
 
 	const xStep = right ? game.cellWidth : -game.cellWidth
 	const yStep = xStep * Math.tan(angle)
-	let isPlayer
 	let wall
 	let nextX = firstX
 	let nextY = firstY
-	while (!wall && !isPlayer) {
+	while (!wall) {
 		const cellX = right
 			? Math.floor(nextX / game.cellWidth)
 			: Math.floor(nextX / game.cellWidth) - 1
@@ -85,7 +85,20 @@ function getVCollision(angle, player) {
 		if (outOfBounds(cellX, cellY)) {
 			break
 		}
-		isPlayer = game.isPlayer(nextX, nextY, player)
+		if (game.isPlayer(nextX, nextY, player)) {
+			playerRays[player.id].push({
+				i,
+				angle,
+				distance: distance(
+					player.xPosition,
+					player.yPosition,
+					nextX,
+					nextY
+				),
+				vertical: true,
+				player,
+			})
+		}
 		wall = game.grid2D[cellY][cellX]
 		if (!wall) {
 			nextX += xStep
@@ -100,7 +113,7 @@ function getVCollision(angle, player) {
 	}
 }
 
-function getHCollision(angle, player) {
+function getHCollision(angle, player, i) {
 	const up = Math.abs(Math.floor(angle / Math.PI) % 2)
 	const firstY = up
 		? Math.floor(player.yPosition / game.cellheight) * game.cellheight
@@ -114,10 +127,9 @@ function getHCollision(angle, player) {
 	const xStep = yStep / Math.tan(angle)
 
 	let wall
-	let isPlayer
 	let nextX = firstX
 	let nextY = firstY
-	while (!wall && !isPlayer) {
+	while (!wall) {
 		const cellX = Math.floor(nextX / game.cellWidth)
 		const cellY = up
 			? Math.floor(nextY / game.cellheight) - 1
@@ -126,7 +138,20 @@ function getHCollision(angle, player) {
 		if (outOfBounds(cellX, cellY)) {
 			break
 		}
-		isPlayer = game.isPlayer(nextX, nextY, player)
+		if (game.isPlayer(nextX, nextY, player)) {
+			playerRays[player.id].push({
+				i,
+				angle,
+				distance: distance(
+					player.xPosition,
+					player.yPosition,
+					nextX,
+					nextY
+				),
+				vertical: true,
+				player,
+			})
+		}
 		wall = game.grid2D[cellY][cellX]
 		if (!wall) {
 			nextX += xStep
@@ -137,13 +162,12 @@ function getHCollision(angle, player) {
 		angle,
 		distance: distance(player.xPosition, player.yPosition, nextX, nextY),
 		vertical: false,
-		isPlayer,
 		player,
 	}
 }
-function castRay(angle, player) {
-	const vCollision = getVCollision(angle, player)
-	const hCollision = getHCollision(angle, player)
+function castRay(angle, player, i) {
+	const vCollision = getVCollision(angle, player, i)
+	const hCollision = getHCollision(angle, player, i)
 	return hCollision.distance > vCollision.distance ? vCollision : hCollision
 }
 
@@ -188,19 +212,74 @@ function renderScene(rays) {
 			canvasHeight / 2 - wallHeight / 2
 		)
 	})
+	const gunMan = new Image()
+	gunMan.src = "./Image/drunken_duck_soldier_silhouette.svg"
+	ctx.fillStyle = colors.player
+	if (playerRays[player1.id][0]) {
+		const playerHeight = ((cellSize * 5) / playerRays[player1.id][0].distance) * 277
+		ctx.drawImage(
+			gunMan,
+			playerRays[player1.id][0].i + playerRays[player1.id][0].player.index * canvasWidth/2,
+			canvasHeight / 2 - playerHeight / 2,
+			playerRays[player1.id][playerRays[player1.id].length-1].i,
+			playerHeight,
+		)
+	}
+	if (playerRays[player2.id][0]) {
+		const playerHeight = ((cellSize * 5) / playerRays[player2.id][0].distance) * 277
+		ctx.drawImage(
+			gunMan,
+			playerRays[player2.id][0].i + playerRays[player2.id][0].player.index * canvasWidth/2,
+			canvasHeight / 2 - playerHeight / 2,
+			playerRays[player2.id][playerRays[player2.id].length - 1].i,
+			playerHeight
+		)
+	}
+	// playerRays[[player1.id]].forEach((ray) => {
+	// 	const distance = fixFishEye(
+	// 		ray.distance,
+	// 		ray.angle,
+	// 		ray.player.direction
+	// 	)
+	// 	const wallHeight = ((cellSize * 5) / distance) * 200
+	// 	ctx.fillStyle = colors.player
+	// 	ctx.fillRect(
+	// 		ray.i + ray.player.index * canvasWidth/2,
+	// 		canvasHeight / 2 - wallHeight / 2,
+	// 		canvasWidth / numberOfRays,
+	// 		wallHeight
+	// 	)
+	// })
+
+	// playerRays[[player2.id]].forEach((ray) => {
+	// 	const distance = fixFishEye(
+	// 		ray.distance,
+	// 		ray.angle,
+	// 		ray.player.direction
+	// 	)
+	// 	const wallHeight = ((cellSize * 5) / distance) * 200
+	// 	ctx.fillStyle = colors.player
+	// 	ctx.fillRect(
+	// 		ray.i + ray.player.index * canvasWidth/2,
+	// 		canvasHeight / 2 - wallHeight / 2,
+	// 		canvasWidth / numberOfRays,
+	// 		wallHeight
+	// 	)
+	// })
+
 	const gunImage = new Image()
 	gunImage.src = "./Image/gun.png"
 	ctx.drawImage(
 		gunImage,
 		canvasWidth / 4,
-		3*canvasHeight / 5,
+		(3 * canvasHeight) / 5,
 		canvasWidth / 5,
 		canvasWidth / 5
 	)
 	ctx.drawImage(
 		gunImage,
 		(3 * canvasWidth) / 4,
-		3*canvasHeight / 5,
+		(3 * canvasHeight) / 5,
 		canvasWidth / 5,
 		canvasWidth / 5
 	)
@@ -218,12 +297,12 @@ function getRay() {
 	const rays = []
 	for (let i = 0; i < numberOfRays; i++) {
 		const angle = initialAngle1 + i * angleStep
-		const ray = castRay(angle, player1)
+		const ray = castRay(angle, player1, i)
 		rays.push(ray)
 	}
 	for (let i = 0; i < numberOfRays; i++) {
 		const angle = initialAngle2 + i * angleStep
-		const ray = castRay(angle, player2)
+		const ray = castRay(angle, player2, i)
 		rays.push(ray)
 	}
 	return rays
@@ -253,6 +332,10 @@ document.addEventListener("keyup", stopPlayer)
 
 setInterval(() => {
 	clearCanvas()
+	playerRays = {
+		[player1.id]: [],
+		[player2.id]: [],
+	}
 	const rays = getRay()
 	renderScene(rays)
 	player1.controlerMove(game)
