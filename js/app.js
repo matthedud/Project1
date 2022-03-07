@@ -1,5 +1,15 @@
-const canvas = document.getElementById("maze-game")
+const parentEl = document.getElementById("game")
+const canvasWidth = 1000
+const canvasHeight = 500
+
+const canvas = document.createElement("canvas")
+canvas.height = canvasHeight
+canvas.width = canvasWidth
+
 const ctx = canvas.getContext("2d")
+
+parentEl.appendChild(canvas)
+
 const numberOfRays = canvasWidth / 2
 let playerRays = {}
 const colors = {
@@ -13,10 +23,10 @@ const colors = {
 	player: "purple",
 }
 
-const player1 = new Player("Bob", 200, 100, Math.PI, "pink", 0)
-const player2 = new Player("Bill", 100, 100, 0, "red", 1)
+const player1 = new Player("Bob", 190, 100, Math.PI, "pink", 0)
+const player2 = new Player("Bill", 50, 100, 0, "red", 1)
 
-const game = new Maze(maze1, [player1, player2])
+const game = new Maze(maze2, [player1, player2])
 
 function movePlayer(event) {
 	if (event.key === "ArrowRight" || event.key === "ArrowLeft")
@@ -108,6 +118,7 @@ function getVCollision(angle, player, i) {
 	return {
 		angle,
 		distance: distance(player.xPosition, player.yPosition, nextX, nextY),
+		xOffset:(nextY % game.cellheight)/game.cellheight,
 		vertical: true,
 		player,
 	}
@@ -148,7 +159,7 @@ function getHCollision(angle, player, i) {
 					nextX,
 					nextY
 				),
-				vertical: true,
+				vertical: false,
 				player,
 			})
 		}
@@ -161,6 +172,7 @@ function getHCollision(angle, player, i) {
 	return {
 		angle,
 		distance: distance(player.xPosition, player.yPosition, nextX, nextY),
+		xOffset: (nextX % game.cellheight)/game.cellheight,
 		vertical: false,
 		player,
 	}
@@ -172,38 +184,38 @@ function castRay(angle, player, i) {
 }
 
 function renderScene(rays) {
+	const wallImage = new Image()
+	wallImage.src =  "./Image/brick-wall-orange-wallpaper-patter_53876-138604.jpg"
+
 	rays.forEach((ray, i) => {
 		const distance = fixFishEye(
 			ray.distance,
 			ray.angle,
 			ray.player.direction
 		)
-		const wallHeight = ((cellSize * 5) / distance) * 277
-		ctx.fillStyle = ray.isPlayer
-			? colors.player
-			: ray.vertical
+		const wallHeight = ((game.cellheight * 5) / distance) * 277
+		ctx.fillStyle = ray.vertical
 			? colors.wall
 			: colors.wallDark
 
-		// const wallImage = new Image()
-		// wallImage.src = ray.vertical ?
-		// 	"./Image/bricks_13/arroway.de_bricks+13_b010.jpg"
-		// 	: './Image/bricks_13/arroway.de_bricks+13_d100.jpg'
-
-		// ctx.drawImage(
-		// 	wallImage,
-		// 	i,
-		// 	canvasHeight / 2 - wallHeight / 2,
-		// 	canvasWidth / numberOfRays,
-		// 	wallHeight
-		// )
-
-		ctx.fillRect(
+		ctx.drawImage(
+			wallImage,
+			(ray.xOffset)*wallImage.width,
+			0,
+			1,
+			wallImage.height,
 			i,
 			canvasHeight / 2 - wallHeight / 2,
 			canvasWidth / numberOfRays,
 			wallHeight
 		)
+
+		// ctx.fillRect(
+		// 	i,
+		// 	canvasHeight / 2 - wallHeight / 2,
+		// 	canvasWidth / numberOfRays,
+		// 	wallHeight
+		// )
 		ctx.fillStyle = colors.floor
 		ctx.fillRect(
 			i,
@@ -216,56 +228,37 @@ function renderScene(rays) {
 	gunMan.src = "./Image/drunken_duck_soldier_silhouette.svg"
 	ctx.fillStyle = colors.player
 	if (playerRays[player1.id][0]) {
-		const playerHeight = ((cellSize * 5) / playerRays[player1.id][0].distance) * 277
+		const wallHeight =
+			((game.cellheight * 5) / playerRays[player1.id][0].distance) * 120
+		const playerHeight =
+			((game.cellheight * 5) / playerRays[player1.id][0].distance) * 200
+		const playerWidth =
+			((game.cellWidth * 5) / playerRays[player1.id][0].distance) * 50
 		ctx.drawImage(
 			gunMan,
-			playerRays[player1.id][0].i + playerRays[player1.id][0].player.index * canvasWidth/2,
-			canvasHeight / 2 - playerHeight / 2,
-			playerRays[player1.id][playerRays[player1.id].length-1].i,
-			playerHeight,
-		)
-	}
-	if (playerRays[player2.id][0]) {
-		const playerHeight = ((cellSize * 5) / playerRays[player2.id][0].distance) * 277
-		ctx.drawImage(
-			gunMan,
-			playerRays[player2.id][0].i + playerRays[player2.id][0].player.index * canvasWidth/2,
-			canvasHeight / 2 - playerHeight / 2,
-			playerRays[player2.id][playerRays[player2.id].length - 1].i,
+			playerRays[player1.id][0].i +
+				(playerRays[player1.id][0].player.index * canvasWidth) / 2,
+			canvasHeight / 2 - wallHeight / 2,
+			playerWidth,
 			playerHeight
 		)
 	}
-	// playerRays[[player1.id]].forEach((ray) => {
-	// 	const distance = fixFishEye(
-	// 		ray.distance,
-	// 		ray.angle,
-	// 		ray.player.direction
-	// 	)
-	// 	const wallHeight = ((cellSize * 5) / distance) * 200
-	// 	ctx.fillStyle = colors.player
-	// 	ctx.fillRect(
-	// 		ray.i + ray.player.index * canvasWidth/2,
-	// 		canvasHeight / 2 - wallHeight / 2,
-	// 		canvasWidth / numberOfRays,
-	// 		wallHeight
-	// 	)
-	// })
-
-	// playerRays[[player2.id]].forEach((ray) => {
-	// 	const distance = fixFishEye(
-	// 		ray.distance,
-	// 		ray.angle,
-	// 		ray.player.direction
-	// 	)
-	// 	const wallHeight = ((cellSize * 5) / distance) * 200
-	// 	ctx.fillStyle = colors.player
-	// 	ctx.fillRect(
-	// 		ray.i + ray.player.index * canvasWidth/2,
-	// 		canvasHeight / 2 - wallHeight / 2,
-	// 		canvasWidth / numberOfRays,
-	// 		wallHeight
-	// 	)
-	// })
+	if (playerRays[player2.id][0]) {
+		const wallHeight =
+			((game.cellheight * 5) / playerRays[player2.id][0].distance) * 120
+		const playerHeight =
+			((game.cellheight * 5) / playerRays[player2.id][0].distance) * 200
+		const playerWidth =
+			((game.cellWidth * 5) / playerRays[player2.id][0].distance) * 50
+		ctx.drawImage(
+			gunMan,
+			playerRays[player2.id][0].i +
+				(playerRays[player2.id][0].player.index * canvasWidth) / 2,
+			canvasHeight / 2 - wallHeight / 2,
+			playerWidth,
+			playerHeight
+		)
+	}
 
 	const gunImage = new Image()
 	gunImage.src = "./Image/gun.png"
@@ -330,7 +323,7 @@ window.addEventListener("gamepaddisconnected", disconnecthandler)
 document.addEventListener("keydown", movePlayer)
 document.addEventListener("keyup", stopPlayer)
 
-setInterval(() => {
+function loopGame() {
 	clearCanvas()
 	playerRays = {
 		[player1.id]: [],
@@ -340,4 +333,7 @@ setInterval(() => {
 	renderScene(rays)
 	player1.controlerMove(game)
 	game.drawMaze(rays)
-}, 50)
+	window.requestAnimationFrame(loopGame)
+}
+
+window.requestAnimationFrame(loopGame)

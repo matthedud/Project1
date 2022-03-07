@@ -1,9 +1,7 @@
 const playerSize = 5
 const turnSpeed = 0.05
 const moveSpeed = 1
-// const FOV = toRadiants(0.5)
 const FOV = 0.7
-const cellSize = 10
 
 class Player {
 	constructor(name, xPosition = 0, yPosition = 0, direction = 0, color, index=0) {
@@ -79,13 +77,13 @@ class Player {
 		if (this.controllerIndex !== null) {
 			const gp = navigator.getGamepads()[this.controllerIndex]
 			// console.log(' Number(gp.axes[0]', Number(gp.axes[0].toFixed(1)));
-			const newXposition = -Math.cos(this.direction) * moveSpeed * Number((gp.axes[1]*5).toFixed(1))
-			const newYposition = -Math.sin(this.direction) * moveSpeed * Number((gp.axes[1]*5).toFixed(1))
+			const newXposition = -Math.cos(this.direction) * moveSpeed * Number((gp.axes[1]).toFixed(1))
+			const newYposition = -Math.sin(this.direction) * moveSpeed * Number((gp.axes[1]).toFixed(1))
 			// const xStrafe = -Math.sin(this.direction) * moveSpeed * Number((gp.axes[0]).toFixed(1))
 			// const yStrafe = -Math.cos(this.direction) * moveSpeed * Number((gp.axes[0]).toFixed(1))
 			this.move(maze, newXposition, newYposition )
 			// this.move(maze,  xStrafe, yStrafe )
-			const newRotate = turnSpeed * gp.axes[2]*2
+			const newRotate = turnSpeed * gp.axes[2]
 			this.rotate(newRotate, maze) 
 			// this.direction = Math.atan2(gp.axes[3], gp.axes[2])
 			if (gp.buttons[7].pressed) game.shoot(this)

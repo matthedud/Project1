@@ -1,5 +1,4 @@
-const canvasWidth = 1000
-const canvasHeight = 500
+
 const scale = 0.3
 
 
