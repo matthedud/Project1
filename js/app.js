@@ -1,15 +1,15 @@
 const canvas = document.getElementById("maze-game")
 const ctx = canvas.getContext("2d")
-const numberOfRays = canvasWidth/2
+const numberOfRays = canvasWidth / 2
 const colors = {
 	floor: "yellow",
 	wall: "#013aa6",
 	wallDark: "#012975",
 	rays: "#ffa600",
-	minimapFloor:'white',
-	minimapWall:'green',
-	bullet: 'black',
-	player:"green"
+	minimapFloor: "white",
+	minimapWall: "green",
+	bullet: "black",
+	player: "green",
 }
 
 const player1 = new Player("Bill", 100, 100, 0, "red")
@@ -94,7 +94,7 @@ function getVCollision(angle, player) {
 		angle,
 		distance: distance(player.xPosition, player.yPosition, nextX, nextY),
 		vertical: true,
-		player
+		player,
 	}
 }
 
@@ -124,7 +124,7 @@ function getHCollision(angle, player) {
 		if (outOfBounds(cellX, cellY)) {
 			break
 		}
-		isPlayer = game.isPlayer(nextX, nextY)
+		// isPlayer = game.isPlayer(nextX, nextY)
 		wall = game.grid2D[cellY][cellX]
 		if (!wall) {
 			nextX += xStep
@@ -136,7 +136,7 @@ function getHCollision(angle, player) {
 		distance: distance(player.xPosition, player.yPosition, nextX, nextY),
 		vertical: false,
 		isPlayer,
-		player
+		player,
 	}
 }
 function castRay(angle, player) {
@@ -147,9 +147,31 @@ function castRay(angle, player) {
 
 function renderScene(rays) {
 	rays.forEach((ray, i) => {
-		const distance = fixFishEye(ray.distance, ray.angle, ray.player.direction)
+		const distance = fixFishEye(
+			ray.distance,
+			ray.angle,
+			ray.player.direction
+		)
 		const wallHeight = ((cellSize * 5) / distance) * 277
-		ctx.fillStyle = ray.isPlayer? colors.player : ray.vertical ? colors.wall : colors.wallDark
+		ctx.fillStyle = ray.isPlayer
+			? colors.player
+			: ray.vertical
+			? colors.wall
+			: colors.wallDark
+
+		// const wallImage = new Image()
+		// wallImage.src = ray.vertical ?
+		// 	"./Image/bricks_13/arroway.de_bricks+13_b010.jpg"
+		// 	: './Image/bricks_13/arroway.de_bricks+13_d100.jpg'
+
+		// ctx.drawImage(
+		// 	wallImage,
+		// 	i,
+		// 	canvasHeight / 2 - wallHeight / 2,
+		// 	canvasWidth / numberOfRays,
+		// 	wallHeight
+		// )
+
 		ctx.fillRect(
 			i,
 			canvasHeight / 2 - wallHeight / 2,
@@ -199,8 +221,15 @@ function connecthandler() {
 			game.players[i].controllerIndex = navigator.getGamepads()[i].index
 	}
 }
+function disconnecthandler() {
+	for (let i = 0; i < navigator.getGamepads().length; i++) {
+		if (game.players[i])
+			game.players[i].controllerIndex = navigator.getGamepads()[i].index
+	}
+}
 
 window.addEventListener("gamepadconnected", connecthandler)
+window.addEventListener("gamepaddisconnected", disconnecthandler)
 document.addEventListener("keydown", movePlayer)
 document.addEventListener("keyup", stopPlayer)
 
