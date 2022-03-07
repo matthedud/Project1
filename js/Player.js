@@ -4,7 +4,15 @@ const moveSpeed = 1
 const FOV = 0.7
 
 class Player {
-	constructor(name, xPosition = 0, yPosition = 0, direction = 0, color, index=0) {
+	constructor(
+		name,
+		xPosition = 0,
+		yPosition = 0,
+		direction = 0,
+		color,
+		index = 0,
+		role = "mouse"
+	) {
 		this.id = name
 		this.index = index
 		this.name = name
@@ -16,9 +24,9 @@ class Player {
 		this.rotateState = null
 		this.controllerIndex = null
 		this.canShoot = true
-		this.xOffset = canvasWidth / 2 - (canvasWidth * scale) / 2
+		this.role = role
 	}
-	draw() {
+	draw(xOffset) {
 		const xDirection =
 			this.xPosition + Math.cos(this.direction) * playerSize
 		const yDirection =
@@ -27,7 +35,7 @@ class Player {
 		ctx.strokeStyle = "green"
 		ctx.beginPath()
 		ctx.arc(
-			this.xPosition + this.xOffset,
+			this.xPosition + xOffset,
 			this.yPosition,
 			playerSize,
 			0,
@@ -36,15 +44,15 @@ class Player {
 		ctx.closePath()
 		ctx.fill()
 		ctx.beginPath()
-		ctx.moveTo(this.xPosition + this.xOffset, this.yPosition)
-		ctx.lineTo(xDirection + this.xOffset, yDirection)
+		ctx.moveTo(this.xPosition + xOffset, this.yPosition)
+		ctx.lineTo(xDirection + xOffset, yDirection)
 		ctx.closePath()
 		ctx.stroke()
 		ctx.fillStyle = "black"
 		ctx.font = "10px Arial"
 		ctx.fillText(
 			`${this.name}`,
-			this.xPosition + this.xOffset,
+			this.xPosition + xOffset,
 			this.yPosition - 18
 		)
 	}
@@ -77,20 +85,41 @@ class Player {
 		if (this.controllerIndex !== null) {
 			const gp = navigator.getGamepads()[this.controllerIndex]
 			// console.log(' Number(gp.axes[0]', Number(gp.axes[0].toFixed(1)));
-			const newXposition = -Math.cos(this.direction) * moveSpeed * Number((gp.axes[1]).toFixed(1))
-			const newYposition = -Math.sin(this.direction) * moveSpeed * Number((gp.axes[1]).toFixed(1))
+			const newXposition =
+				-Math.cos(this.direction) *
+				moveSpeed *
+				Number(gp.axes[1].toFixed(1))
+			const newYposition =
+				-Math.sin(this.direction) *
+				moveSpeed *
+				Number(gp.axes[1].toFixed(1))
 			// const xStrafe = -Math.sin(this.direction) * moveSpeed * Number((gp.axes[0]).toFixed(1))
 			// const yStrafe = -Math.cos(this.direction) * moveSpeed * Number((gp.axes[0]).toFixed(1))
-			this.move(maze, newXposition, newYposition )
+			this.move(maze, newXposition, newYposition)
 			// this.move(maze,  xStrafe, yStrafe )
 			const newRotate = turnSpeed * gp.axes[2]
-			this.rotate(newRotate, maze) 
+			this.rotate(newRotate, maze)
 			// this.direction = Math.atan2(gp.axes[3], gp.axes[2])
 			if (gp.buttons[7].pressed) game.shoot(this)
 		}
 	}
+	// controlerMove(maze) {
+	// 	if (this.controllerIndex !== null) {
+	// 		const gp = navigator.getGamepads()[this.controllerIndex]
+	// 		const newXposition =
+	// 			this.xPosition + Number(gp.axes[0].toFixed(1)) * moveSpeed
+	// 		const newYposition =
+	// 			this.yPosition + Number(gp.axes[1].toFixed(1)) * moveSpeed
+	// 		if (!maze.isWall(newXposition, newYposition)) {
+	// 			this.xPosition = newXposition
+	// 			this.yPosition = newYposition
+	// 		}
+	// 		this.direction = Math.atan2(gp.axes[3], gp.axes[2])
+	// 		if (gp.buttons[7].pressed) game.shoot(this)
+	// 	}
+	// }
 	resetMove() {
-		if(this.moveState?.interval){
+		if (this.moveState?.interval) {
 			clearInterval(this.moveState.interval)
 			this.moveState = null
 		}
@@ -131,7 +160,7 @@ class Player {
 		this.direction += newRotate
 		this.direction %= 2 * Math.PI
 		if (this.moveState) {
-            const key=this.moveState.key
+			const key = this.moveState.key
 			this.resetMove()
 			this.setMove(key, maze)
 		}

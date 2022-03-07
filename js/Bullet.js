@@ -6,12 +6,11 @@ class Bullet {
 		this.yPosition = yPosition
 		this.direction = direction
 		this.id = id
-		this.xOffset = canvasWidth / 2 - canvasWidth*scale/2
 	}
-	draw() {
+	draw(xOffset) {
 		ctx.fillStyle = colors.bullet
 		ctx.beginPath()
-		ctx.arc(this.xPosition + this.xOffset, this.yPosition, 1, 0, 2 * Math.PI)
+		ctx.arc(this.xPosition + xOffset, this.yPosition, 1, 0, 2 * Math.PI)
 		ctx.closePath()
 		ctx.fill()
 		ctx.stroke()

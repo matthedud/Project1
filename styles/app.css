@@ -24,20 +24,25 @@ canvas{
     background: url('../Image/panorama_landscapes_175/panorama_landscapes_175.jpg');
 }
 
-.modal{
+#modal{
     display: flex;
     flex-direction: column;
     visibility: hidden;
-    /* position: absolute; */
+    position: absolute;
+    top: 5rem;
+    right: 0;
+    left: 0;
     width: 70vw;
     max-width: 500px;
     min-width: 200px;
     padding: 25px;
     border: 1px black solid ;
     background-color: antiquewhite;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.modal.visible{
+#modal.visible{
     visibility: visible;
 }
 form select, form input, form button{

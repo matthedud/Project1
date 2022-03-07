@@ -1,15 +1,12 @@
 
-const scale = 0.3
-
-
-class Maze {
+class Game {
 	constructor(grid2D, players) {
 		this.grid2D = grid2D
 		this.players = players
-		this.bullets = []
-		this.cellWidth = (scale * canvasWidth) / grid2D[0].length
-		this.cellheight = (scale * canvasHeight) / grid2D.length
-		this.bulletCounter = 0
+		this.scale = 0.3
+		this.cellWidth = (this.scale * canvasWidth) / grid2D[0].length
+		this.cellheight = (this.scale * canvasHeight) / grid2D.length
+		this.xOffset = canvasWidth / 2 - (canvasWidth * this.scale) / 2
 	}
 	drawMaze(rays) {
 		this.grid2D.forEach((line, lineInd) => {
@@ -29,11 +26,11 @@ class Maze {
 		// 	ctx.stroke()
 		// })
 		this.players.forEach((player) => {
-			player.draw()
+			player.draw(this.xOffset)
 		})
 
 		this.bullets.forEach((bullet) => {
-			bullet.draw()
+			bullet.draw(this.xOffset)
 		})
 	}
 	drawCell(cell, cellInd, lineInd) {
@@ -41,7 +38,7 @@ class Maze {
 		const x =
 			cellInd * this.cellWidth +
 			canvasWidth / 2 -
-			(scale * canvasWidth) / 2
+			(this.scale * canvasWidth) / 2
 		const y = lineInd * this.cellheight
 		ctx.beginPath()
 		ctx.fillRect(x, y, this.cellWidth, this.cellheight)
@@ -58,16 +55,7 @@ class Maze {
 			return true
 		return this.grid2D[lineIndex][cellIndex]
 	}
-	shoot(player) {
-		if (player.canShoot) {
-			this.bulletCounter++
-			const bullet = new Bullet({ ...player }, this.bulletCounter)
-			this.bullets.push(bullet)
-			bullet.move(this)
-			player.canShoot = false
-			setTimeout(() => (player.canShoot = true), 500)
-		}
-	}
+
 	isPlayer(x, y, viewingPlayer) {
 		for (const player of this.players) {
 			if (
@@ -81,5 +69,41 @@ class Maze {
 			}
 		}
 		return false
+	}
+}
+
+
+class Shooter extends Game{
+	constructor(grid2D, players){
+		super(grid2D, players)
+		this.bullets = []
+		this.bulletCounter = 0
+	}
+	shoot(player) {
+		if (player.canShoot) {
+			this.bulletCounter++
+			const bullet = new Bullet({ ...player }, this.bulletCounter)
+			this.bullets.push(bullet)
+			bullet.move(this)
+			player.canShoot = false
+			setTimeout(() => (player.canShoot = true), 500)
+		}
+	}
+}
+
+class Tag extends Game{
+	constructor(grid2D, players){
+		super(grid2D, players)
+		this.timer=0
+	}
+}
+
+class MegaShooter extends Shooter{
+	constructor(grid2D, players){
+		super(grid2D, players)
+		this.scale = 1
+		this.cellWidth = (this.scale * canvasWidth) / grid2D[0].length
+		this.cellheight = (this.scale * canvasHeight) / grid2D.length
+		this.xOffset = canvasWidth / 2 - (canvasWidth * this.scale) / 2
 	}
 }

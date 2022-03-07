@@ -1,17 +1,25 @@
 const parentEl = document.getElementById("game")
-const canvasWidth = 1300
-const canvasHeight = 500
+const settingsButton = document.getElementById("btn-settings")
+const cancelButton = document.getElementById("btn-cl")
+const startButton = document.getElementById("btn-start")
+const form = document.getElementById("modal")
+// const canvasHeight = 500
+// const canvasWidth = 1000
+const canvasWidth = window.innerWidth  - 10
+const canvasHeight = window.innerHeight - 130
+const numberOfRays = 300
+let pauseGame = true
 
+
+let playerRays = {}
 const canvas = document.createElement("canvas")
 canvas.height = canvasHeight
 canvas.width = canvasWidth
-
+let game
 const ctx = canvas.getContext("2d")
 
 parentEl.appendChild(canvas)
 
-const numberOfRays = canvasWidth / 2
-let playerRays = {}
 const colors = {
 	floor: "rgb(64, 64, 77)",
 	wall: "#013aa6",
@@ -23,296 +31,93 @@ const colors = {
 	player: "purple",
 }
 
-const player1 = new Player("Bob", 190, 100, Math.PI, "pink", 0)
-const player2 = new Player("Bill", 50, 100, 0, "red", 1)
+window.addEventListener("gamepadconnected", connecthandler)
+window.addEventListener("gamepaddisconnected", disconnecthandler)
+document.addEventListener("keydown", movePlayer)
+document.addEventListener("keyup", stopPlayer)
+settingsButton.addEventListener("click", showSettings)
+cancelButton.addEventListener("click", hideSettings)
+form.addEventListener("submit", startGame)
 
-const game = new Maze(maze[1], [player1, player2])
+function loopGame() {
+	clearCanvas()
+	playerRays = {
+		[game.players[0].id]: [],
+		[game.players[1].id]: [],
+	}
+	const rays = getRay()
+	renderScene(rays)
+	game.players[0].controlerMove(game)
+	game.drawMaze(rays)
+	if (!pauseGame) window.requestAnimationFrame(loopGame)
+}
+
+function showSettings() {
+	pauseGame = true
+	form.classList.add("visible")
+}
+function hideSettings(e) {
+	e.preventDefault()
+	pauseGame = false
+	form.classList.remove("visible")
+}
+function startGame(event) {
+	event.preventDefault()
+	const player1 = new Player(
+		event.target[0].value,
+		190,
+		100,
+		Math.PI,
+		"pink",
+		0
+	)
+	const player2 = new Player(event.target[1].value, 50, 100, 0, "red", 1)
+	game = new Shooter(maze[event.target[2].value], [player1, player2])
+	window.requestAnimationFrame(loopGame)
+	hideSettings(event)
+}
 
 function movePlayer(event) {
-	if (event.key === "ArrowRight" || event.key === "ArrowLeft")
-		player1.setRotate(event.key, game)
-	if (event.key === "ArrowUp" || event.key === "ArrowDown") {
-		player1.setMove(event.key, game)
-	}
-	if (event.key === "z" || event.key === "s") {
-		player2.setMove(event.key, game)
-	}
-	if (event.key === "q" || event.key === "d") {
-		player2.setRotate(event.key, game)
-	}
-	if (event.key === "a") {
-		game.shoot(player2)
-	}
-	if (event.key === ":") {
-		game.shoot(player1)
+	if (!pauseGame) {
+		if (event.key === "ArrowRight" || event.key === "ArrowLeft")
+			game.players[0].setRotate(event.key, game)
+		if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+			game.players[0].setMove(event.key, game)
+		}
+		if (event.key === "z" || event.key === "s") {
+			game.players[1].setMove(event.key, game)
+		}
+		if (event.key === "q" || event.key === "d") {
+			game.players[1].setRotate(event.key, game)
+		}
+		if (event.key === "a") {
+			game.shoot(game.players[1])
+		}
+		if (event.key === ":") {
+			game.shoot(game.players[0])
+		}
 	}
 }
 
 function stopPlayer(event) {
-	if (event.key === "ArrowRight" || event.key === "ArrowLeft")
-		player1.resetRotate(event.key, game)
-	if (event.key === "ArrowUp" || event.key === "ArrowDown") {
-		player1.resetMove(event.key, game)
-	}
-	if (event.key === "z" || event.key === "s") {
-		player2.resetMove(event.key, game)
-	}
-	if (event.key === "q" || event.key === "d") {
-		player2.resetRotate(event.key, game)
-	}
-}
-
-function outOfBounds(x, y) {
-	return (
-		x < 0 || x >= game.grid2D[0].length || y < 0 || y >= game.grid2D.length
-	)
-}
-
-function distance(x1, y1, x2, y2) {
-	return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
-}
-
-function getVCollision(angle, player, i) {
-	const right = Math.abs(Math.floor((angle - Math.PI / 2) / Math.PI) % 2)
-	const firstX = right
-		? Math.floor(player.xPosition / game.cellWidth) * game.cellWidth +
-		  game.cellWidth
-		: Math.floor(player.xPosition / game.cellWidth) * game.cellWidth
-
-	const firstY =
-		player.yPosition + (firstX - player.xPosition) * Math.tan(angle)
-
-	const xStep = right ? game.cellWidth : -game.cellWidth
-	const yStep = xStep * Math.tan(angle)
-	let wall
-	let nextX = firstX
-	let nextY = firstY
-	while (!wall) {
-		const cellX = right
-			? Math.floor(nextX / game.cellWidth)
-			: Math.floor(nextX / game.cellWidth) - 1
-		const cellY = Math.floor(nextY / game.cellheight)
-		if (outOfBounds(cellX, cellY)) {
-			break
+	if (!pauseGame) {
+		if (event.key === "ArrowRight" || event.key === "ArrowLeft")
+			game.players[0].resetRotate(event.key, game)
+		if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+			game.players[0].resetMove(event.key, game)
 		}
-		if (game.isPlayer(nextX, nextY, player)) {
-			playerRays[player.id].push({
-				i,
-				angle,
-				distance: distance(
-					player.xPosition,
-					player.yPosition,
-					nextX,
-					nextY
-				),
-				vertical: true,
-				player,
-			})
+		if (event.key === "z" || event.key === "s") {
+			game.players[1].resetMove(event.key, game)
 		}
-		wall = game.grid2D[cellY][cellX]
-		if (!wall) {
-			nextX += xStep
-			nextY += yStep
+		if (event.key === "q" || event.key === "d") {
+			game.players[1].resetRotate(event.key, game)
 		}
 	}
-	return {
-		angle,
-		distance: distance(player.xPosition, player.yPosition, nextX, nextY),
-		xOffset: (nextY % game.cellheight) / game.cellheight,
-		vertical: true,
-		player,
-	}
-}
-
-function getHCollision(angle, player, i) {
-	const up = Math.abs(Math.floor(angle / Math.PI) % 2)
-	const firstY = up
-		? Math.floor(player.yPosition / game.cellheight) * game.cellheight
-		: Math.floor(player.yPosition / game.cellheight) * game.cellheight +
-		  game.cellheight
-
-	const firstX =
-		player.xPosition + (firstY - player.yPosition) / Math.tan(angle)
-
-	const yStep = up ? -game.cellheight : game.cellheight
-	const xStep = yStep / Math.tan(angle)
-
-	let wall
-	let nextX = firstX
-	let nextY = firstY
-	while (!wall) {
-		const cellX = Math.floor(nextX / game.cellWidth)
-		const cellY = up
-			? Math.floor(nextY / game.cellheight) - 1
-			: Math.floor(nextY / game.cellheight)
-
-		if (outOfBounds(cellX, cellY)) {
-			break
-		}
-		if (game.isPlayer(nextX, nextY, player)) {
-			playerRays[player.id].push({
-				i,
-				angle,
-				distance: distance(
-					player.xPosition,
-					player.yPosition,
-					nextX,
-					nextY
-				),
-				vertical: false,
-				player,
-			})
-		}
-		wall = game.grid2D[cellY][cellX]
-		if (!wall) {
-			nextX += xStep
-			nextY += yStep
-		}
-	}
-	return {
-		angle,
-		distance: distance(player.xPosition, player.yPosition, nextX, nextY),
-		xOffset: (nextX % game.cellheight) / game.cellheight,
-		vertical: false,
-		player,
-	}
-}
-function castRay(angle, player, i) {
-	const vCollision = getVCollision(angle, player, i)
-	const hCollision = getHCollision(angle, player, i)
-	return hCollision.distance > vCollision.distance ? vCollision : hCollision
-}
-
-function renderScene(rays) {
-	const wallImage = new Image()
-	// wallImage.src =  "./Image/brick-wall-orange-wallpaper-patter_53876-138604.jpg"
-	// wallImage.src =  "./Image/bricks_13/arroway.de_bricks+13_d100.jpg"
-	wallImage.src = "./Image/WM_BrickWork-50_1024/WM_BrickWork-50_1024.png"
-	const floorImage = new Image()
-	floorImage.src =
-		"./Image/FloorTreadPattern-3v2_UR_1024/FloorTreadPattern-3v2_UR_1024.png"
-
-	rays.forEach((ray, i) => {
-		const distance = fixFishEye(
-			ray.distance,
-			ray.angle,
-			ray.player.direction
-		)
-		const wallHeight = ((game.cellheight * 5) / distance) * 277
-		ctx.fillStyle = ray.vertical ? colors.wall : colors.wallDark
-
-		ctx.drawImage(
-			wallImage,
-			ray.xOffset * wallImage.width,
-			0,
-			1,
-			wallImage.height,
-			i,
-			canvasHeight / 2 - wallHeight / 2,
-			canvasWidth / numberOfRays,
-			wallHeight
-		)
-
-		ctx.fillStyle = colors.floor
-		// ctx.drawImage(
-		// 	floorImage,
-		// 	(ray.xOffset)*floorImage.width,
-		// 	0,
-		// 	1,
-		// 	floorImage.height,
-		// 	i,
-		// 	canvasHeight / 2 + wallHeight / 2,
-		// 	canvasWidth / numberOfRays,
-		// 	canvasHeight / 2 - wallHeight / 2
-		// )
-		ctx.fillRect(
-			i,
-			canvasHeight / 2 + wallHeight / 2,
-			canvasWidth / numberOfRays,
-			canvasHeight / 2 - wallHeight / 2
-		)
-	})
-	ctx.fillStyle = "black"
-	ctx.fillRect(canvasWidth/2 - 3, 0, 6, canvasHeight)
-	const gunMan = new Image()
-	gunMan.src = "./Image/drunken_duck_soldier_silhouette.svg"
-	ctx.fillStyle = colors.player
-	if (playerRays[player1.id][0]) {
-		const wallHeight =
-			((game.cellheight * 5) / playerRays[player1.id][0].distance) * 120
-		const playerHeight =
-			((game.cellheight * 5) / playerRays[player1.id][0].distance) * 200
-		const playerWidth =
-			((game.cellWidth * 5) / playerRays[player1.id][0].distance) * 50
-		ctx.drawImage(
-			gunMan,
-			playerRays[player1.id][0].i +
-				(playerRays[player1.id][0].player.index * canvasWidth) / 2,
-			canvasHeight / 2 - wallHeight / 2,
-			playerWidth,
-			playerHeight
-		)
-	}
-	if (playerRays[player2.id][0]) {
-		const wallHeight =
-			((game.cellheight * 5) / playerRays[player2.id][0].distance) * 120
-		const playerHeight =
-			((game.cellheight * 5) / playerRays[player2.id][0].distance) * 200
-		const playerWidth =
-			((game.cellWidth * 5) / playerRays[player2.id][0].distance) * 50
-		ctx.drawImage(
-			gunMan,
-			playerRays[player2.id][0].i +
-				(playerRays[player2.id][0].player.index * canvasWidth) / 2,
-			canvasHeight / 2 - wallHeight / 2,
-			playerWidth,
-			playerHeight
-		)
-	}
-
-	const gunImage = new Image()
-	gunImage.src = "./Image/gun.png"
-	ctx.drawImage(
-		gunImage,
-		canvasWidth / 4,
-		(3 * canvasHeight) / 5,
-		canvasWidth / 5,
-		canvasWidth / 5
-	)
-	ctx.drawImage(
-		gunImage,
-		(3 * canvasWidth) / 4,
-		(3 * canvasHeight) / 5,
-		canvasWidth / 5,
-		canvasWidth / 5
-	)
 }
 
 function fixFishEye(distance, angle, playerAngle) {
 	const diff = angle - playerAngle
 	return distance * Math.cos(diff)
-}
-
-function getRay() {
-	const initialAngle1 = player1.direction - FOV / 2
-	const initialAngle2 = player2.direction - FOV / 2
-	const angleStep = FOV / numberOfRays
-	const rays = []
-	for (let i = 0; i < numberOfRays; i++) {
-		const angle = initialAngle1 + i * angleStep
-		const ray = castRay(angle, player1, i)
-		rays.push(ray)
-	}
-	for (let i = 0; i < numberOfRays; i++) {
-		const angle = initialAngle2 + i * angleStep
-		const ray = castRay(angle, player2, i)
-		rays.push(ray)
-	}
-	return rays
-}
-
-function clearCanvas() {
-	ctx.clearRect(0, 0, canvasWidth, canvasHeight)
 }
 
 function connecthandler() {
@@ -327,23 +132,3 @@ function disconnecthandler() {
 			game.players[i].controllerIndex = navigator.getGamepads()[i].index
 	}
 }
-
-window.addEventListener("gamepadconnected", connecthandler)
-window.addEventListener("gamepaddisconnected", disconnecthandler)
-document.addEventListener("keydown", movePlayer)
-document.addEventListener("keyup", stopPlayer)
-
-function loopGame() {
-	clearCanvas()
-	playerRays = {
-		[player1.id]: [],
-		[player2.id]: [],
-	}
-	const rays = getRay()
-	renderScene(rays)
-	player1.controlerMove(game)
-	game.drawMaze(rays)
-	window.requestAnimationFrame(loopGame)
-}
-
-window.requestAnimationFrame(loopGame)
