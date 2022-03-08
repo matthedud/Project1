@@ -99,7 +99,7 @@ class Player {
 			// this.move(maze,  xStrafe, yStrafe )
 			const newRotate = turnSpeed * gp.axes[2]
 			this.rotate(newRotate, maze)
-			// this.direction = Math.atan2(gp.axes[3], gp.axes[2])
+			// this.direction = Math.atan(gp.axes[3], gp.axes[2])
 			if (gp.buttons[7].pressed) game.shoot(this)
 		}
 	}
@@ -114,7 +114,7 @@ class Player {
 	// 			this.xPosition = newXposition
 	// 			this.yPosition = newYposition
 	// 		}
-	// 		this.direction = Math.atan2(gp.axes[3], gp.axes[2])
+	// 		this.direction = Math.atan(gp.axes[3], gp.axes[2])
 	// 		if (gp.buttons[7].pressed) game.shoot(this)
 	// 	}
 	// }
@@ -157,7 +157,7 @@ class Player {
 		this.rotateState = null
 	}
 	rotate(newRotate, maze) {
-		this.direction += newRotate
+		this.direction += newRotate + 2 * Math.PI
 		this.direction %= 2 * Math.PI
 		if (this.moveState) {
 			const key = this.moveState.key

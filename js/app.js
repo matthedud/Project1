@@ -3,11 +3,11 @@ const settingsButton = document.getElementById("btn-settings")
 const cancelButton = document.getElementById("btn-cl")
 const startButton = document.getElementById("btn-start")
 const form = document.getElementById("modal")
-// const canvasHeight = 500
-// const canvasWidth = 1000
-const canvasWidth = window.innerWidth - 20
-const canvasHeight = window.innerHeight - 120
-let numberOfRays = 300
+const canvasHeight = 500
+const canvasWidth = 1000
+// const canvasWidth = Math.floor(window.innerWidth*0.5 - 20)
+// const canvasHeight = Math.floor(window.innerHeight*0.5 - 120)
+let numberOfRays = canvasWidth / 2
 let pauseGame = true
 
 let playerRays = {}
@@ -32,23 +32,11 @@ const colors = {
 
 window.addEventListener("gamepadconnected", connecthandler)
 window.addEventListener("gamepaddisconnected", disconnecthandler)
-document.addEventListener("keydown", movePlayer)
-document.addEventListener("keyup", stopPlayer)
+document.addEventListener("keydown", keyDownlistener)
+document.addEventListener("keyup", keyUpListener)
 settingsButton.addEventListener("click", showSettings)
 cancelButton.addEventListener("click", hideSettings)
 form.addEventListener("submit", startGame)
-
-function loopGame() {
-	clearCanvas()
-	const rays = game.players.reduce(
-		(playerRay, player) => [...playerRay, ...getRay(player)],
-		[]
-	)
-	renderScene(rays)
-	game.players[0].controlerMove(game)
-	game.drawMaze(rays)
-	if (!pauseGame) window.requestAnimationFrame(loopGame)
-}
 
 function showSettings() {
 	pauseGame = true
@@ -58,25 +46,52 @@ function hideSettings(e) {
 	e.preventDefault()
 	pauseGame = false
 	form.classList.remove("visible")
-}
-function startGame(event) {
-	event.preventDefault()
-	const player1 = new Player(
-		event.target[0].value,
-		190,
-		100,
-		Math.PI,
-		"pink",
-		0
-	)
-	const player2 = new Player(event.target[1].value, 50, 100, 0, "red", 1)
-	game = new Shooter(maze[event.target[2].value], [player1, player2])
-	numberOfRays = event.target[3].value > 2000 ? 2000 : event.target[3].value
-	window.requestAnimationFrame(loopGame)
-	hideSettings(event)
+	if (game) game.runGameLoop()
 }
 
-function movePlayer(event) {
+function startGame(event) {
+	hideSettings(event)
+	event.preventDefault()
+
+	const map = maze[event.target[3].value]
+	switch (event.target[0].value) {
+		case "1":
+			game = new Shooter(map)
+			break
+		case "2":
+			game = new Tag(map)
+			break
+		case "3":
+			game = new MegaShooter(map)
+			break
+	}
+	let randomCoord = game.randomPlacement()
+	const player1 = new Player(
+		event.target[1].value,
+		randomCoord.x,
+		randomCoord.y,
+		Math.random() * 2 * Math.PI,
+		randomColor(),
+		game.players.length
+	)
+
+	randomCoord = game.randomPlacement()
+	game.players.push(player1)
+	const player2 = new Player(
+		event.target[2].value,
+		randomCoord.x,
+		randomCoord.y,
+		Math.random() * 2 * Math.PI,
+		randomColor(),
+		game.players.length
+	)
+	game.players.push(player2)
+
+	game.runGameLoop()
+	// numberOfRays = event.target[4].value > 2000 ? 2000 : event.target[4].value
+}
+
+function keyDownlistener(event) {
 	if (!pauseGame) {
 		if (event.key === "ArrowRight" || event.key === "ArrowLeft")
 			game.players[0].setRotate(event.key, game)
@@ -98,7 +113,7 @@ function movePlayer(event) {
 	}
 }
 
-function stopPlayer(event) {
+function keyUpListener(event) {
 	if (!pauseGame) {
 		if (event.key === "ArrowRight" || event.key === "ArrowLeft")
 			game.players[0].resetRotate(event.key, game)
@@ -114,15 +129,22 @@ function stopPlayer(event) {
 	}
 }
 
-function fixFishEye(distance, angle, playerAngle) {
-	const diff = angle - playerAngle
-	return distance * Math.cos(diff)
-}
-
 function connecthandler() {
 	for (let i = 0; i < navigator.getGamepads().length; i++) {
 		if (game.players[i])
 			game.players[i].controllerIndex = navigator.getGamepads()[i].index
+		else{
+			const newCoord = game.randomPlacement()
+			const newPlayer = new Player (
+				`player${game.players.length+1}`,
+				newCoord.x,
+				newCoord.y,
+				Math.random() * 2 * Math.PI,
+				randomColor(),
+				game.players.length
+			)
+			game.players.push(newPlayer)
+		}	
 	}
 }
 function disconnecthandler() {
@@ -130,4 +152,8 @@ function disconnecthandler() {
 		if (game.players[i])
 			game.players[i].controllerIndex = navigator.getGamepads()[i].index
 	}
+}
+
+function randomColor(){
+	return "#"+ Math.floor(Math.random()*16777215).toString(16)
 }

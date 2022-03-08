@@ -15,6 +15,12 @@
 		<div id="game"></div>
 		<form action="" id="modal" class="visible">
 			<h1>Settings</h1>
+			<label for="game-choice">Select Game</label>
+			<select id="game-choice" type="text" required>
+				<option value="1">2 Shooter</option>
+				<option value="2">Tag</option>
+				<option value="3">megaMulti</option>
+			</select>
 			<label for="player1Name">Player 1 Name</label>
 			<input type="text" id="player1Name" class="text-input" value='Bill' required />
 			<label for="player2Name">Player 2 Name</label>
@@ -27,12 +33,7 @@
 			</select>
 			<label for="resolution">Résolition (max 2000)</label>
 			<input type="number" id="resolution" class="number-input" value='300' required />
-			<!-- <label for="game-choice">Select Game</label>
-			<select id="game-choice" type="text" required>
-				<option value="0">2 Shooter</option>
-				<option value="1">Tag</option>
-				<option value="2">megaMulti</option>
-			</select> -->
+
 			<button id="btn-start" type="submit" value="Submit">
 				restart game
 			</button>
