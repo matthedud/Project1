@@ -5,11 +5,10 @@ const startButton = document.getElementById("btn-start")
 const form = document.getElementById("modal")
 // const canvasHeight = 500
 // const canvasWidth = 1000
-const canvasWidth = window.innerWidth  - 10
-const canvasHeight = window.innerHeight - 130
-const numberOfRays = 300
+const canvasWidth = window.innerWidth - 20
+const canvasHeight = window.innerHeight - 120
+let numberOfRays = 300
 let pauseGame = true
-
 
 let playerRays = {}
 const canvas = document.createElement("canvas")
@@ -41,11 +40,10 @@ form.addEventListener("submit", startGame)
 
 function loopGame() {
 	clearCanvas()
-	playerRays = {
-		[game.players[0].id]: [],
-		[game.players[1].id]: [],
-	}
-	const rays = getRay()
+	const rays = game.players.reduce(
+		(playerRay, player) => [...playerRay, ...getRay(player)],
+		[]
+	)
 	renderScene(rays)
 	game.players[0].controlerMove(game)
 	game.drawMaze(rays)
@@ -73,6 +71,7 @@ function startGame(event) {
 	)
 	const player2 = new Player(event.target[1].value, 50, 100, 0, "red", 1)
 	game = new Shooter(maze[event.target[2].value], [player1, player2])
+	numberOfRays = event.target[3].value > 2000 ? 2000 : event.target[3].value
 	window.requestAnimationFrame(loopGame)
 	hideSettings(event)
 }

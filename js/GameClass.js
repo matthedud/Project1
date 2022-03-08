@@ -14,17 +14,17 @@ class Game {
 				this.drawCell(cell, cellInd, lineInd)
 			})
 		})
-		// rays.forEach((ray) => {
-		// 	ctx.strokeStyle = colors.rays
-		// 	ctx.beginPath()
-		// 	ctx.moveTo(ray.player.xPosition + ray.player.xOffset, ray.player.yPosition)
-		// 	ctx.lineTo(
-		// 		ray.player.xPosition+ ray.player.xOffset + Math.cos(ray.angle) * ray.distance,
-		// 		ray.player.yPosition + Math.sin(ray.angle) * ray.distance
-		// 	)
-		// 	ctx.closePath()
-		// 	ctx.stroke()
-		// })
+		rays.forEach((ray) => {
+			ctx.strokeStyle = colors.rays
+			ctx.beginPath()
+			ctx.moveTo(ray.player.xPosition + this.xOffset, ray.player.yPosition)
+			ctx.lineTo(
+				ray.player.xPosition+ this.xOffset + Math.cos(ray.angle) * ray.distance,
+				ray.player.yPosition + Math.sin(ray.angle) * ray.distance
+			)
+			ctx.closePath()
+			ctx.stroke()
+		})
 		this.players.forEach((player) => {
 			player.draw(this.xOffset)
 		})
