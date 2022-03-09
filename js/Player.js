@@ -82,7 +82,7 @@ class Player {
 		}
 	}
 	controlerMove(maze) {
-		if (this.controller !== null) {
+		if (this.controller !== null && this.controller.id !=='K1' && this.controller.id !=='K2') {
 			const gp = navigator.getGamepads()[this.controller?.index]
 			// console.log(' Number(gp.axes[0]', Number(gp.axes[0].toFixed(1)));
 			const newXposition =

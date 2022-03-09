@@ -12,7 +12,7 @@ const canvasWidth = 1000
 // const canvasHeight = Math.floor(window.innerHeight - 120)
 let numberOfRays = canvasWidth / 2
 let pauseGame = true
-const playerListe = []
+const keyboards = [new KeyBoard("K1"), new KeyBoard("K2")]
 
 const canvas = document.createElement("canvas")
 canvas.height = canvasHeight
@@ -33,7 +33,7 @@ const colors = {
 	player: "purple",
 }
 
-window.addEventListener("gamepadconnected", connecthandler)
+window.addEventListener("gamepadconnected", showController)
 window.addEventListener("gamepaddisconnected", disconnecthandler)
 document.addEventListener("keydown", keyDownlistener)
 document.addEventListener("keyup", keyUpListener)
@@ -48,9 +48,11 @@ function showSettings() {
 	form.classList.add("visible")
 }
 function showController() {
-	pauseGame = true
-	controlerSetup.classList.add("visible")
-	setController()
+	if(game){
+		pauseGame = true
+		controlerSetup.classList.add("visible")
+		setController()
+	}
 }
 function hideController() {
 	pauseGame = false
@@ -67,7 +69,7 @@ function hideSettings(e) {
 function startGame(event) {
 	hideSettings(event)
 	event.preventDefault()
-
+	controllerButton.disabled = false
 	const map = maze[event.target[3].value]
 	switch (event.target[0].value) {
 		case "1":
@@ -90,6 +92,7 @@ function startGame(event) {
 		game.players.length,
 		'cat',
 	)
+	player1.controller = keyboards[0]
 
 	randomCoord = game.randomPlacement()
 	game.players.push(player1)
@@ -101,6 +104,7 @@ function startGame(event) {
 		randomColor(),
 		game.players.length,
 	)
+	player2.controller = keyboards[1]
 	game.players.push(player2)
 
 	game.runGameLoop()

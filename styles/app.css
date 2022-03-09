@@ -86,12 +86,10 @@ header{
 .keyboard{
     background: url("../Image/High-contrast-input-keyboard.svg");
 }
+
 .controler:hover, .keyboard:hover{
     cursor: grab;
 }
-.icon.over {
-    border: 3px dotted #666;
-  }
 
 .player{
     background: url("../Image/2162179.svg");
@@ -103,3 +101,13 @@ header{
     width: 6rem;
 }
 
+.over {
+    border: 3px dotted #666;
+}
+
+
+.player-container{
+    display: flex;
+    width: 100%;
+    height: 6rem;
+}

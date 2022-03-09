@@ -1,10 +1,7 @@
 let dragSrcEl = null
-
 function handleDragStart(e) {
 	this.style.opacity = "0.4"
 	dragSrcEl = this
-	e.dataTransfer.setData("Text", e.target.id)
-	e.dataTransfer.effectAllowed = "move"
 }
 function handleDragEnd(e) {
 	this.style.opacity = "1"
@@ -13,7 +10,7 @@ function handleDragEnter(e) {
 	this.classList.add("over")
 }
 function handleDragOver(e) {
-	e.preventDefault();
+	e.preventDefault()
 }
 function handleDragLeave(e) {
 	this.classList.remove("over")
@@ -21,31 +18,60 @@ function handleDragLeave(e) {
 
 function handleDrop(event) {
 	event.preventDefault()
-	console.log('dropevent', event);
-	event.target.appendChild(dragSrcEl)
-    return false;
-  }
+	console.log("childElementCount", event.target.childElementCount)
+	// console.log('childElementCount', event.target.childElementCount);
+	if (event.target.className.includes("player-container")) {
+		if (event.target.childElementCount > 1) {
+			const controlerContainer =
+				document.getElementById("controller-liste")
+			controlerContainer.appendChild(event.target.lastChild)
+		}
+		event.target.appendChild(dragSrcEl)
+		const targetPlayer = game.players.find(
+			(el) => el.id.toString() === event.target.id
+		)
 
+		if (dragSrcEl.id[0] === "K")
+			targetPlayer.controller = keyboards.find(
+				(el) => el.id === dragSrcEl.id
+			)
+		else {
+			targetPlayer.controller = navigator
+				.getGamepads()
+				.find((el) => el.id === dragSrcEl.id)
+		}
+	}
+	if (event.target.id.includes("controller-liste")) {
+		const targetPlayer = game.players.find(el=>el.id.toString()===dragSrcEl.parentNode.id)
+		targetPlayer.controller=null
+		event.target.appendChild(dragSrcEl)
+	}
+	return false
+}
 
-function createIcon(id) {
+function createIconEl(id) {
 	const newIconEl = document.createElement("div")
 	newIconEl.classList.add("icon")
 	newIconEl.setAttribute("id", id)
-	newIconEl.addEventListener("dragleave", handleDragLeave)
-	newIconEl.addEventListener("dragenter", handleDragEnter)
-	newIconEl.addEventListener("dragover",handleDragOver );
-	newIconEl.addEventListener("drop", handleDrop)
 	return newIconEl
 }
 
 function createPlayerEl(id) {
-	const newPlayerEl = createIcon(id)
-	newPlayerEl.classList.add("player")
+	const newPlayerEl = document.createElement("div")
+	const newIconEl = createIconEl(id)
+	newIconEl.classList.add("player")
+	newPlayerEl.appendChild(newIconEl)
+	newPlayerEl.setAttribute("id", id)
+	newPlayerEl.classList.add("player-container")
+	newPlayerEl.addEventListener("dragover", handleDragOver)
+	newPlayerEl.addEventListener("drop", handleDrop)
+	newPlayerEl.addEventListener("dragleave", handleDragLeave)
+	newPlayerEl.addEventListener("dragenter", handleDragEnter)
 	return newPlayerEl
 }
 
 function createControllerEl(id) {
-	const newControllerEl = createIcon(id)
+	const newControllerEl = createIconEl(id)
 	newControllerEl.classList.add("controler")
 	newControllerEl.setAttribute("draggable", true)
 	newControllerEl.addEventListener("dragstart", handleDragStart)
@@ -54,12 +80,31 @@ function createControllerEl(id) {
 }
 
 function createKeyboardEl(id) {
-	const newKeyboardEl = document.createElement("div")
-	newKeyboardEl.classList.add("icon")
-	newKeyboardEl.classList.add("keyboard")
-	newKeyboardEl.setAttribute("draggable", true)
-	newKeyboardEl.setAttribute("id", id)
+	const newKeyboardEl = createControllerEl(id)
+	newKeyboardEl.classList.replace("controler", "keyboard")
 	return newKeyboardEl
+}
+
+function createAddButton(playerContainer) {
+	const newButton = document.createElement("button")
+	newButton.textContent = "Add Player"
+	newButton.addEventListener("click", () => addPlayer(playerContainer))
+	playerContainer.appendChild(newButton)
+}
+
+function addPlayer(playerContainer) {
+	const randomCoord = game.randomPlacement()
+	const newplayer = new Player(
+		"P" + game.players.length,
+		randomCoord.x,
+		randomCoord.y,
+		Math.random() * 2 * Math.PI,
+		randomColor(),
+		game.players.length
+	)
+	game.players.push(newplayer)
+	const newPlayerEl = createPlayerEl(newplayer.id)
+	playerContainer.appendChild(newPlayerEl)
 }
 
 function setController() {
@@ -67,26 +112,35 @@ function setController() {
 	const playerContainer = document.getElementById("player-liste")
 	controlerContainer.innerHTML = ""
 	playerContainer.innerHTML = ""
+	if (game.type !== "shooter") createAddButton(playerContainer)
+	controlerContainer.addEventListener("dragover", handleDragOver)
+	controlerContainer.addEventListener("drop", handleDrop)
+	controlerContainer.addEventListener("dragleave", handleDragLeave)
+	controlerContainer.addEventListener("dragenter", handleDragEnter)
 	const controlerList = navigator.getGamepads().filter((el) => el)
 
-	controlerContainer.appendChild(createControllerEl(1))
-	playerContainer.appendChild(createPlayerEl(1))
+	// controlerContainer.appendChild(createControllerEl('C1'))
+	// playerContainer.appendChild(createPlayerEl('P1'))
 
-	for (const player of playerListe) {
+	for (const player of game.players) {
 		const newPlayerEl = createPlayerEl(player.id)
 		if (player.controller) {
-			const index = controlerList.findIndex(
-				(el) => el.id === player.controller.id
-			)
-			if (index > -1) {
-				newPlayerEl.appendChild(
-					createControllerEl(player.controller.id)
+			if (
+				player.controller.id === "K1" ||
+				player.controller.id === "K2"
+			) {
+				newPlayerEl.appendChild(createKeyboardEl(player.controller.id))
+			} else {
+				const index = controlerList.findIndex(
+					(el) => el.id === player.controller.id
 				)
-				controlerList.splice(index, 1)
-			} else player.controller = null
-		}
-		if (player.keyboard) {
-			newPlayerEl.appendChild(createKeyboardEl(player.keyboard))
+				if (index > -1) {
+					newPlayerEl.appendChild(
+						createControllerEl(player.controller.id)
+					)
+					controlerList.splice(index, 1)
+				} else player.controller = null
+			}
 		}
 		playerContainer.appendChild(newPlayerEl)
 	}
