@@ -20,11 +20,10 @@ class Player {
 		this.yPosition = yPosition
 		this.direction = direction
 		this.color = color
-		this.moveState = null
-		this.rotateState = null
 		this.controller = null
 		this.canShoot = true
 		this.role = role
+		this.score = 0
 	}
 	draw(xOffset) {
 		const xDirection =
@@ -56,53 +55,44 @@ class Player {
 			this.yPosition - 18
 		)
 	}
-	setMove(key, maze) {
-		let newXposition = 0
-		let newYposition = 0
-		if (!this.moveState) {
-			switch (key) {
-				case "ArrowUp":
-				case "z":
-					newXposition = Math.cos(this.direction) * moveSpeed
-					newYposition = Math.sin(this.direction) * moveSpeed
-					break
-				case "ArrowDown":
-				case "s":
-					newXposition = -Math.cos(this.direction) * moveSpeed
-					newYposition = -Math.sin(this.direction) * moveSpeed
-					break
-			}
-			this.moveState = {
-				interval: setInterval(
-					() => this.move(maze, newXposition, newYposition),
-					20
-				),
-				key,
+	setMove(maze){
+		if(this.controller){
+			if (this.controller.id[0] ==='K') {
+				if(this.controller.up){
+					const newXposition = Math.cos(this.direction) * moveSpeed
+					const newYposition = Math.sin(this.direction) * moveSpeed
+					this.move(maze, newXposition, newYposition)
+				}else if(this.controller.down){
+					const newXposition = -Math.cos(this.direction) * moveSpeed
+					const newYposition = -Math.sin(this.direction) * moveSpeed
+					this.move(maze, newXposition, newYposition)
+				}
+				if(this.controller.turnRight) this.rotate(turnSpeed, maze)
+				else if(this.controller.turnLeft) this.rotate(-turnSpeed, maze)
+				if (this.controller.shoot) game.shoot(this)
+			}else {
+				const gp = navigator.getGamepads()[this.controller?.index]
+				// console.log(' Number(gp.axes[0]', Number(gp.axes[0].toFixed(1)));
+				const newXposition =
+					-Math.cos(this.direction) *
+					moveSpeed *
+					Number(gp.axes[1].toFixed(1))
+				const newYposition =
+					-Math.sin(this.direction) *
+					moveSpeed *
+					Number(gp.axes[1].toFixed(1))
+				// const xStrafe = -Math.sin(this.direction) * moveSpeed * Number((gp.axes[0]).toFixed(1))
+				// const yStrafe = -Math.cos(this.direction) * moveSpeed * Number((gp.axes[0]).toFixed(1))
+				this.move(maze, newXposition, newYposition)
+				// this.move(maze,  xStrafe, yStrafe )
+				const newRotate = turnSpeed * gp.axes[2]
+				this.rotate(newRotate, maze)
+				// this.direction = Math.atan(gp.axes[3], gp.axes[2])
+				if (gp.buttons[7].pressed) game.shoot(this)
 			}
 		}
 	}
-	controlerMove(maze) {
-		if (this.controller !== null && this.controller.id !=='K1' && this.controller.id !=='K2') {
-			const gp = navigator.getGamepads()[this.controller?.index]
-			// console.log(' Number(gp.axes[0]', Number(gp.axes[0].toFixed(1)));
-			const newXposition =
-				-Math.cos(this.direction) *
-				moveSpeed *
-				Number(gp.axes[1].toFixed(1))
-			const newYposition =
-				-Math.sin(this.direction) *
-				moveSpeed *
-				Number(gp.axes[1].toFixed(1))
-			// const xStrafe = -Math.sin(this.direction) * moveSpeed * Number((gp.axes[0]).toFixed(1))
-			// const yStrafe = -Math.cos(this.direction) * moveSpeed * Number((gp.axes[0]).toFixed(1))
-			this.move(maze, newXposition, newYposition)
-			// this.move(maze,  xStrafe, yStrafe )
-			const newRotate = turnSpeed * gp.axes[2]
-			this.rotate(newRotate, maze)
-			// this.direction = Math.atan(gp.axes[3], gp.axes[2])
-			if (gp.buttons[7].pressed) game.shoot(this)
-		}
-	}
+
 	// controlerMove(maze) {
 	// 	if (this.controller !== null) {
 	// 		const gp = navigator.getGamepads()[this.controller]
@@ -118,51 +108,14 @@ class Player {
 	// 		if (gp.buttons[7].pressed) game.shoot(this)
 	// 	}
 	// }
-	resetMove() {
-		if (this.moveState?.interval) {
-			clearInterval(this.moveState.interval)
-			this.moveState = null
-		}
-	}
 	move(maze, xMove, yMove) {
 		if (!maze.isWall(this.xPosition + xMove, this.yPosition + yMove)) {
 			this.xPosition += xMove
 			this.yPosition += yMove
-		} else {
-			this.resetMove()
 		}
-	}
-	setRotate(key, maze) {
-		if (!this.rotateState) {
-			switch (key) {
-				case "ArrowRight":
-				case "d":
-					this.rotateState = setInterval(
-						() => this.rotate(turnSpeed, maze),
-						20
-					)
-					break
-				case "ArrowLeft":
-				case "q":
-					this.rotateState = setInterval(
-						() => this.rotate(-turnSpeed, maze),
-						20
-					)
-					break
-			}
-		}
-	}
-	resetRotate() {
-		clearInterval(this.rotateState)
-		this.rotateState = null
 	}
 	rotate(newRotate, maze) {
 		this.direction += newRotate + 2 * Math.PI
 		this.direction %= 2 * Math.PI
-		if (this.moveState) {
-			const key = this.moveState.key
-			this.resetMove()
-			this.setMove(key, maze)
-		}
 	}
 }

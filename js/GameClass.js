@@ -6,6 +6,7 @@ class Game {
 		this.cellWidth = (this.scale * canvasWidth) / grid2D[0].length
 		this.cellheight = (this.scale * canvasHeight) / grid2D.length
 		this.xOffset = canvasWidth / 2 - (canvasWidth * this.scale) / 2
+		this.gameInterval = null
 	}
 	drawMaze(rays) {
 		this.grid2D.forEach((line, lineInd) => {
@@ -76,6 +77,17 @@ class Game {
 		}
 		return false
 	}
+	resetGame(){
+		for (const keyboard of keyboards){
+			keyboard.resetKeyboard()
+		}
+		for(const player of this.players){
+			const coord = this.randomPlacement()
+			player.xPosition = coord.x
+			player.yPosition = coord.y
+		}
+		this.bullets = []
+	}
 	runGameLoop() {
 		clearCanvas()
 		const player1Rays = getRay(this.players[0], this.players[1])
@@ -83,7 +95,7 @@ class Game {
 		const wallRays = [...player1Rays, ...player2Rays]
 		renderScene(wallRays)
 		for (const player of this.players) {
-			player.controlerMove(game)
+			player.setMove(game)
 		}
 		this.drawMaze(wallRays)
 		if (!pauseGame) window.requestAnimationFrame(()=>this.runGameLoop())
@@ -136,7 +148,7 @@ class MegaShooter extends Shooter {
 	runGameLoop() {
 		clearCanvas()
 		for (const player of this.players) {
-			player.controlerMove(game)
+			player.setMove(game)
 		}
 		this.drawMaze()
 		if (!pauseGame) window.requestAnimationFrame(()=>this.runGameLoop())

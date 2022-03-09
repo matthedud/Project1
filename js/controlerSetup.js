@@ -30,7 +30,6 @@ function handleDrop(event) {
 		const targetPlayer = game.players.find(
 			(el) => el.id.toString() === event.target.id
 		)
-
 		if (dragSrcEl.id[0] === "K")
 			targetPlayer.controller = keyboards.find(
 				(el) => el.id === dragSrcEl.id

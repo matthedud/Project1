@@ -34,9 +34,8 @@ const colors = {
 }
 
 window.addEventListener("gamepadconnected", showController)
-window.addEventListener("gamepaddisconnected", disconnecthandler)
-document.addEventListener("keydown", keyDownlistener)
-document.addEventListener("keyup", keyUpListener)
+window.addEventListener("gamepaddisconnected", showController)
+
 settingsButton.addEventListener("click", showSettings)
 controllerButton.addEventListener("click", showController)
 cancelButton.addEventListener("click", hideSettings)
@@ -109,80 +108,6 @@ function startGame(event) {
 
 	game.runGameLoop()
 	numberOfRays = event.target[4].value > 2000 ? 2000 : event.target[4].value
-}
-
-function keyDownlistener(event) {
-	if (!pauseGame) {
-		if (event.key === "ArrowRight" || event.key === "ArrowLeft")
-			game.players[0].setRotate(event.key, game)
-		if (event.key === "ArrowUp" || event.key === "ArrowDown") {
-			game.players[0].setMove(event.key, game)
-		}
-		if (event.key === "z" || event.key === "s") {
-			game.players[1].setMove(event.key, game)
-		}
-		if (event.key === "q" || event.key === "d") {
-			game.players[1].setRotate(event.key, game)
-		}
-		if (event.key === "a") {
-			game.shoot(game.players[1])
-		}
-		if (event.key === ":") {
-			game.shoot(game.players[0])
-		}
-	}
-}
-
-function keyUpListener(event) {
-	if (!pauseGame) {
-		if (event.key === "ArrowRight" || event.key === "ArrowLeft")
-			game.players[0].resetRotate(event.key, game)
-		if (event.key === "ArrowUp" || event.key === "ArrowDown") {
-			game.players[0].resetMove(event.key, game)
-		}
-		if (event.key === "z" || event.key === "s") {
-			game.players[1].resetMove(event.key, game)
-		}
-		if (event.key === "q" || event.key === "d") {
-			game.players[1].resetRotate(event.key, game)
-		}
-	}
-}
-
-function connecthandler() {
-	for (let i = 0; i < navigator.getGamepads().length; i++) {
-		console.log('navigator.getGamepads()[i]',navigator.getGamepads()[i]);
-		if (navigator.getGamepads()[i]){
-			if (game.players[i+1])
-				game.players[i+1].controller = {
-					index: navigator.getGamepads()[i].index,
-					id : navigator.getGamepads()[i].id
-				}
-			else if (game.type === 'megaShooter'){
-				const newCoord = game.randomPlacement()
-				const newPlayer = new Player (
-					`player${game.players.length+1}`,
-					newCoord.x,
-					newCoord.y,
-					Math.random() * 2 * Math.PI,
-					randomColor(),
-					game.players.length
-				)
-				newPlayer.controller = {
-					index: navigator.getGamepads()[i].index,
-					id : navigator.getGamepads()[i].id
-				}
-				game.players.push(newPlayer)
-			}	
-		}
-	}
-}
-function disconnecthandler(event) {
-	console.log(event.gamepad)
-	for (let i = 0; i < navigator.getGamepads().length; i++) {
-		if (game.players[i])
-			game.players[i].controllerIndex = navigator.getGamepads()[i].index
-	}
 }
 
 function randomColor(){
