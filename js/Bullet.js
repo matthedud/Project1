@@ -1,10 +1,11 @@
 const bulletVelocity = 9
 
 class Bullet {
-	constructor({ xPosition, yPosition, direction }, id) {
-		this.xPosition = xPosition
-		this.yPosition = yPosition
-		this.direction = direction
+	constructor(player, id) {
+		this.xPosition = player.xPosition
+		this.yPosition = player.yPosition
+		this.direction = player.direction
+		this.player = player
 		this.id = id
 	}
 	draw(xOffset) {
@@ -22,6 +23,7 @@ class Bullet {
 			this.yPosition + Math.sin(this.direction) * bulletVelocity
         const player = maze.isPlayer(newXposition, newYposition)
 		if (player) {
+			this.player.score++
             player.name = window.prompt(
                 `${player.name} lost, name him:`,
                 player.name

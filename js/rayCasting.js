@@ -224,13 +224,13 @@ function fixFishEye(distance, angle, playerToPlayerAngle) {
 }
 
 function getRay(playerLooking, playerSeen) {
-	const playerCoord = getPlayerPosition(playerLooking, playerSeen)
+	const playerCoords = getPlayerPosition(playerLooking, playerSeen)
 	const initialAngle = playerLooking.direction - FOV / 2
 	const angleStep = FOV / numberOfRays
 	const rays = []
 	for (let i = 0; i < numberOfRays; i++) {
 		const angle = initialAngle + i * angleStep
-		const ray = castRay(angle, playerLooking, playerCoord)
+		const ray = castRay(angle, playerLooking, playerCoords)
 		rays.push(ray)
 	}
 	return rays
@@ -245,36 +245,40 @@ function getPlayerToPlayerAngle(playerLooking, playerSeen) {
 	return playerToPlayerAngle
 }
 
-function getPlayerPosition(playerLooking, playerSeen) {
+function getPlayerPosition(playerLooking, playerSeenList) {
 	const playerDirection = playerLooking.direction
-	const playerDistance = distance(
-		playerLooking.xPosition,
-		playerLooking.yPosition,
-		playerSeen.xPosition,
-		playerSeen.yPosition
-	)
-	const playerToPlayerAngle = getPlayerToPlayerAngle(
-		playerLooking,
-		playerSeen
-	)
-	if (
-		playerToPlayerAngle > playerDirection - FOV / 2 &&
-		playerToPlayerAngle < playerDirection + FOV / 2
-	) {
-		const playerWidth = (playerSize * 50) / playerDistance
-		const playerHeight = ((playerSize * 5) / playerDistance) * 277
-		const viewAngle = Math.atan(playerWidth / 2 / playerDistance)
-		const initialAngle = playerToPlayerAngle - viewAngle / 2
-		const endAngle = playerToPlayerAngle + viewAngle / 2
-		return {
-			initialAngle,
-			endAngle,
-			distance: playerDistance,
-			height: playerHeight,
-			width: playerWidth,
+	const result = []
+	for(const playerSeen of playerSeenList){
+		const playerDistance = distance(
+			playerLooking.xPosition,
+			playerLooking.yPosition,
+			playerSeen.xPosition,
+			playerSeen.yPosition
+		)
+		const playerToPlayerAngle = getPlayerToPlayerAngle(
+			playerLooking,
+			playerSeen
+		)
+		if (
+			playerToPlayerAngle > playerDirection - FOV / 2 &&
+			playerToPlayerAngle < playerDirection + FOV / 2
+		) {
+			const playerWidth = (playerSize * 50) / playerDistance
+			const playerHeight = ((playerSize * 5) / playerDistance) * 277
+			const viewAngle = Math.atan(playerWidth / 2 / playerDistance)
+			const initialAngle = playerToPlayerAngle - viewAngle / 2
+			const endAngle = playerToPlayerAngle + viewAngle / 2
+			result.push( {
+				initialAngle,
+				endAngle,
+				distance: playerDistance,
+				height: playerHeight,
+				width: playerWidth,
+				player:playerSeen,
+			})
 		}
 	}
-	return false
+	return result
 }
 
 function clearCanvas() {

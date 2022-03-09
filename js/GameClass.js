@@ -90,8 +90,8 @@ class Game {
 	}
 	runGameLoop() {
 		clearCanvas()
-		const player1Rays = getRay(this.players[0], this.players[1])
-		const player2Rays = getRay(this.players[1], this.players[0])
+		const player1Rays = getRay(this.players[0], [this.players[1]])
+		const player2Rays = getRay(this.players[1], [this.players[0]])
 		const wallRays = [...player1Rays, ...player2Rays]
 		renderScene(wallRays)
 		for (const player of this.players) {
@@ -112,18 +112,24 @@ class Shooter extends Game {
 	shoot(player) {
 		if (player.canShoot) {
 			this.bulletCounter++
-			const bullet = new Bullet({ ...player }, this.bulletCounter)
+			const bullet = new Bullet(player, this.bulletCounter)
 			this.bullets.push(bullet)
 			bullet.move(this)
 			player.canShoot = false
 			setTimeout(() => (player.canShoot = true), 500)
 		}
 	}
+	drawScore(){
+		ctx.font = '48px serif';
+		ctx.fillText(this.players[0].score, 10, 50);
+		ctx.fillText(this.players[1].score, canvasWidth-40, 50);
+	}
 	drawMaze(rays) {
 		super.drawMaze(rays)
 		this.bullets.forEach((bullet) => {
 			bullet.draw(this.xOffset)
 		})
+		this.drawScore()
 	}
 }
 
@@ -133,6 +139,17 @@ class Tag extends Game {
 		this.timer = 0
 		this.type = 'tag'
 		this.cat = null
+	}
+	runGameLoop() {
+		clearCanvas()
+		const player1Rays = getRay(this.players[0], [this.players[1]])
+		const wallRays = [...player1Rays, ...player2Rays]
+		renderScene(wallRays)
+		for (const player of this.players) {
+			player.setMove(game)
+		}
+		this.drawMaze(wallRays)
+		if (!pauseGame) window.requestAnimationFrame(()=>this.runGameLoop())
 	}
 }
 
