@@ -18,8 +18,6 @@ function handleDragLeave(e) {
 
 function handleDrop(event) {
 	event.preventDefault()
-	console.log("childElementCount", event.target.childElementCount)
-	// console.log('childElementCount', event.target.childElementCount);
 	if (event.target.className.includes("player-container")) {
 		if (event.target.childElementCount > 1) {
 			const controlerContainer =
@@ -35,9 +33,7 @@ function handleDrop(event) {
 				(el) => el.id === dragSrcEl.id
 			)
 		else {
-			targetPlayer.controller = navigator
-				.getGamepads()
-				.find((el) => el.id === dragSrcEl.id)
+			targetPlayer.controller = navigator.getGamepads()[dragSrcEl.id]
 		}
 	}
 	if (event.target.id.includes("controller-liste")) {
@@ -116,10 +112,9 @@ function setController() {
 	controlerContainer.addEventListener("drop", handleDrop)
 	controlerContainer.addEventListener("dragleave", handleDragLeave)
 	controlerContainer.addEventListener("dragenter", handleDragEnter)
-	const controlerList = navigator.getGamepads().filter((el) => el)
 
-	// controlerContainer.appendChild(createControllerEl('C1'))
-	// playerContainer.appendChild(createPlayerEl('P1'))
+	const controlerList = navigator.getGamepads().filter((el) => el)
+	const keyboardList = [...keyboards]
 
 	for (const player of game.players) {
 		const newPlayerEl = createPlayerEl(player.id)
@@ -129,13 +124,14 @@ function setController() {
 				player.controller.id === "K2"
 			) {
 				newPlayerEl.appendChild(createKeyboardEl(player.controller.id))
+				keyboardList.splice(keyboardList.findIndex(el=>el===player.controller.id), 1)
 			} else {
 				const index = controlerList.findIndex(
 					(el) => el.id === player.controller.id
 				)
 				if (index > -1) {
 					newPlayerEl.appendChild(
-						createControllerEl(player.controller.id)
+						createControllerEl(player.controller.index)
 					)
 					controlerList.splice(index, 1)
 				} else player.controller = null
@@ -144,7 +140,11 @@ function setController() {
 		playerContainer.appendChild(newPlayerEl)
 	}
 	for (const controler of controlerList) {
-		const newControllerEl = createControllerEl(controler.id)
+		const newControllerEl = createControllerEl(controler.index)
 		controlerContainer.appendChild(newControllerEl)
+	}
+	for (const keyboard of keyboardList) {
+		const newKeybordEl = createKeyboardEl(keyboard.id)
+		controlerContainer.appendChild(newKeybordEl)
 	}
 }

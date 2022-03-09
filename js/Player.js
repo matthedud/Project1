@@ -72,7 +72,8 @@ class Player {
 				if (this.controller.shoot) game.shoot(this)
 			}else {
 				const gp = navigator.getGamepads()[this.controller?.index]
-				// console.log(' Number(gp.axes[0]', Number(gp.axes[0].toFixed(1)));
+				console.log('gp', gp);
+				console.log('index', this.controller?.index);
 				const newXposition =
 					-Math.cos(this.direction) *
 					moveSpeed *
