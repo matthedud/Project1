@@ -122,7 +122,7 @@ function castRay(angle, player, playerCoord) {
 	return hCollision.distance > vCollision.distance ? vCollision : hCollision
 }
 
-function renderScene(rays) {
+function renderScene(rays, player1Coord, player2Coord) {
 	const wallImage = new Image()
 	// wallImage.src =
 	// 	"./Image/brick-wall-orange-wallpaper-patter_53876-138604.jpg"

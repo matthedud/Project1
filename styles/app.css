@@ -78,6 +78,7 @@ header{
     flex-wrap: wrap;
     flex: 1;
     flex-direction: row;
+    justify-content: center;
 }
 .controler{
     background: url("../Image/Controller.svg");
@@ -88,6 +89,9 @@ header{
 .controler:hover, .keyboard:hover{
     cursor: grab;
 }
+.icon.over {
+    border: 3px dotted #666;
+  }
 
 .player{
     background: url("../Image/2162179.svg");
