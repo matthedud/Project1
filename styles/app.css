@@ -8,7 +8,7 @@ body{
     flex-direction: column;
     justify-content: center;
     align-content: center;
-    background: url('../Image/WM_Marble-125_1024/WM_Marble-125_1024.png');
+    background: url('../Image/back/WM_Marble-125_1024.png');
 }
 
 #game{
@@ -21,7 +21,7 @@ body{
 
 canvas{
     border: 5px black solid ;
-    background: url('../Image/panorama_landscapes_175/panorama_landscapes_175.jpg');
+    background: url('../Image/back/panorama_landscapes_175.jpg');
 }
 
 .modal{
@@ -81,10 +81,10 @@ header{
     justify-content: center;
 }
 .controler{
-    background: url("../Image/Controller.svg");
+    background: url("../Image/player/Controller.svg");
 }
 .keyboard{
-    background: url("../Image/High-contrast-input-keyboard.svg");
+    background: url("../Image/player/High-contrast-input-keyboard.svg");
 }
 
 .controler:hover, .keyboard:hover{
@@ -92,7 +92,7 @@ header{
 }
 
 .player{
-    background: url("../Image/2162179.svg");
+    background: url("../Image/playerzz/2162179.svg");
 }
 .icon{
     background-size: cover;

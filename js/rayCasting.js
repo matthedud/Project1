@@ -104,7 +104,8 @@ function getHCollision(angle, player, playerCoord) {
 	}
 }
 
-function addPlayerRay(playerCoord, angle, wallDistance){
+function addPlayerRay(playerCoordList, angle, wallDistance){
+	const playerCoord = playerCoordList[0]
 	if (
 		playerCoord &&
 		angle > playerCoord?.initialAngle &&
@@ -122,13 +123,13 @@ function castRay(angle, player, playerCoord) {
 	return hCollision.distance > vCollision.distance ? vCollision : hCollision
 }
 
-function renderScene(rays, player1Coord, player2Coord) {
+function renderScene(rays) {
 	const wallImage = new Image()
 	// wallImage.src =
 	// 	"./Image/brick-wall-orange-wallpaper-patter_53876-138604.jpg"
-	wallImage.src = "./Image/WM_BrickWork-50_1024/WM_BrickWork-50_1024.png"
+	wallImage.src = "./Image/wall/pics/greystone.png"
 	const gunMan = new Image()
-	gunMan.src = "./Image/drunken_duck_soldier_silhouette.svg"
+	gunMan.src = "./Image/player/stability_officer_sheet_palette.png"
 	
 	rays.forEach((ray, i) => {
 		const distance = fixFishEye(
@@ -183,7 +184,7 @@ function renderScene(rays, player1Coord, player2Coord) {
 			// )
 			ctx.fillRect(
 				((i / 2) * canvasWidth) / numberOfRays,
-				canvasHeight / 2 - ray.playerRay.height / 2,
+				canvasHeight / 2 - ray.playerRay.height / 7 ,
 				canvasWidth / numberOfRays,
 				ray.playerRay.height
 			)
@@ -200,7 +201,7 @@ function renderScene(rays, player1Coord, player2Coord) {
 
 
 	const gunImage = new Image()
-	gunImage.src = "./Image/gun.png"
+	gunImage.src = "./Image/gun/gun.png"
 	ctx.drawImage(
 		gunImage,
 		canvasWidth / 4,
@@ -263,8 +264,8 @@ function getPlayerPosition(playerLooking, playerSeenList) {
 			playerToPlayerAngle > playerDirection - FOV / 2 &&
 			playerToPlayerAngle < playerDirection + FOV / 2
 		) {
-			const playerWidth = (playerSize * 50) / playerDistance
-			const playerHeight = ((playerSize * 5) / playerDistance) * 277
+			const playerWidth = (playerSize * 90) / playerDistance
+			const playerHeight = ((playerSize * 9) / playerDistance) * 277
 			const viewAngle = Math.atan(playerWidth / 2 / playerDistance)
 			const initialAngle = playerToPlayerAngle - viewAngle / 2
 			const endAngle = playerToPlayerAngle + viewAngle / 2
