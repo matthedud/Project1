@@ -10,10 +10,13 @@
 	<body>
 		<header>
 			<h1>The Game</h1>
-			<button id="btn-settings">Settings</button>
+			<div class="button-groupe">
+				<button id="btn-settings" class="btn-settings" >Settings</button>
+				<button id="btn-controlers" class="btn-settings">Controlers</button>
+			</div>
 		</header>
 		<div id="game"></div>
-		<form action="" id="modal" class="visible">
+		<form action="" id="form" class="modal visible">
 			<h1>Settings</h1>
 			<label for="game-choice">Select Game</label>
 			<select id="game-choice" type="text" required>
@@ -39,11 +42,20 @@
 			</button>
 			<button id="btn-cl">Cancel</button>
 		</form>
+		<div id="controler-setup" class="modal">
+			<h1>Controller Assigns</h1>
+			<div id="controller-container">
+				<div id="player-liste"></div>
+				<div id="controller-liste"></div>
+			</div>
+			<button id="btn-close">Close</button>
+		</div>
 		<script src="./js/Bullet.js"></script>
 		<script src="./js/Player.js"></script>
 		<script src="./js/mapDataBase.js"></script>
 		<script src="./js/GameClass.js"></script>
 		<script src="./js/rayCasting.js"></script>
+		<script src="./js/controlerSetup.js"></script>
 		<script src="./js/App.js"></script>
 	</body>
 </html>

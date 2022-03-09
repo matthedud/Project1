@@ -13,7 +13,7 @@ class Player {
 		index = 0,
 		role = "mouse"
 	) {
-		this.id = name
+		this.id = index
 		this.index = index
 		this.name = name
 		this.xPosition = xPosition
@@ -22,7 +22,7 @@ class Player {
 		this.color = color
 		this.moveState = null
 		this.rotateState = null
-		this.controllerIndex = null
+		this.controller = null
 		this.canShoot = true
 		this.role = role
 	}
@@ -82,8 +82,8 @@ class Player {
 		}
 	}
 	controlerMove(maze) {
-		if (this.controllerIndex !== null) {
-			const gp = navigator.getGamepads()[this.controllerIndex]
+		if (this.controller !== null) {
+			const gp = navigator.getGamepads()[this.controller?.index]
 			// console.log(' Number(gp.axes[0]', Number(gp.axes[0].toFixed(1)));
 			const newXposition =
 				-Math.cos(this.direction) *
@@ -104,8 +104,8 @@ class Player {
 		}
 	}
 	// controlerMove(maze) {
-	// 	if (this.controllerIndex !== null) {
-	// 		const gp = navigator.getGamepads()[this.controllerIndex]
+	// 	if (this.controller !== null) {
+	// 		const gp = navigator.getGamepads()[this.controller]
 	// 		const newXposition =
 	// 			this.xPosition + Number(gp.axes[0].toFixed(1)) * moveSpeed
 	// 		const newYposition =

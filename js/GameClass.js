@@ -96,6 +96,7 @@ class Game {
 class Shooter extends Game {
 	constructor(grid2D, players) {
 		super(grid2D, players)
+		this.type = 'shooter'
 		this.bullets = []
 		this.bulletCounter = 0
 	}
@@ -121,6 +122,7 @@ class Tag extends Game {
 	constructor(grid2D, players) {
 		super(grid2D, players)
 		this.timer = 0
+		this.type = 'tag'
 		this.cat = null
 	}
 }
@@ -128,6 +130,7 @@ class Tag extends Game {
 class MegaShooter extends Shooter {
 	constructor(grid2D, players) {
 		super(grid2D, players)
+		this.type = 'megaShooter'
 		this.scale = 1
 		this.cellWidth = (this.scale * canvasWidth) / grid2D[0].length
 		this.cellheight = (this.scale * canvasHeight) / grid2D.length

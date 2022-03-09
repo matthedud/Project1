@@ -24,7 +24,7 @@ canvas{
     background: url('../Image/panorama_landscapes_175/panorama_landscapes_175.jpg');
 }
 
-#modal{
+.modal{
     display: flex;
     flex-direction: column;
     visibility: hidden;
@@ -42,7 +42,7 @@ canvas{
     margin-right: auto;
 }
 
-#modal.visible{
+.modal.visible{
     visibility: visible;
 }
 form select, form input, form button{
@@ -59,6 +59,43 @@ header{
     justify-content: space-around;
 }
 
-#btn-settings{
+.btn-settings{
     width: 10rem;
+    height: 2rem;
 }
+.button-groupe{
+    display: flex;
+    align-items: center;
+}
+
+#controller-container{
+    display: flex;
+    flex-direction: row;
+}
+
+#controller-liste, #player-liste{
+    display: flex;
+    flex-wrap: wrap;
+    flex: 1;
+    flex-direction: row;
+}
+.controler{
+    background: url("../Image/Controller.svg");
+}
+.keyboard{
+    background: url("../Image/High-contrast-input-keyboard.svg");
+}
+.controler:hover, .keyboard:hover{
+    cursor: grab;
+}
+
+.player{
+    background: url("../Image/2162179.svg");
+}
+.icon{
+    background-size: cover;
+    background-position: center;
+    height: 6rem;
+    width: 6rem;
+}
+

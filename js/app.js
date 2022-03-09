@@ -1,16 +1,19 @@
 const parentEl = document.getElementById("game")
 const settingsButton = document.getElementById("btn-settings")
+const controllerButton = document.getElementById("btn-controlers")
 const cancelButton = document.getElementById("btn-cl")
 const startButton = document.getElementById("btn-start")
-const form = document.getElementById("modal")
+const closeControllerButton = document.getElementById("btn-close")
+const form = document.getElementById("form")
+const controlerSetup = document.getElementById("controler-setup")
 const canvasHeight = 500
 const canvasWidth = 1000
-// const canvasWidth = Math.floor(window.innerWidth*0.5 - 20)
-// const canvasHeight = Math.floor(window.innerHeight*0.5 - 120)
+// const canvasWidth = window.innerWidth > 2000?2000: Math.floor(window.innerWidth - 40)
+// const canvasHeight = Math.floor(window.innerHeight - 120)
 let numberOfRays = canvasWidth / 2
 let pauseGame = true
+const playerListe = []
 
-let playerRays = {}
 const canvas = document.createElement("canvas")
 canvas.height = canvasHeight
 canvas.width = canvasWidth
@@ -35,12 +38,24 @@ window.addEventListener("gamepaddisconnected", disconnecthandler)
 document.addEventListener("keydown", keyDownlistener)
 document.addEventListener("keyup", keyUpListener)
 settingsButton.addEventListener("click", showSettings)
+controllerButton.addEventListener("click", showController)
 cancelButton.addEventListener("click", hideSettings)
+closeControllerButton.addEventListener("click", hideController)
 form.addEventListener("submit", startGame)
 
 function showSettings() {
 	pauseGame = true
 	form.classList.add("visible")
+}
+function showController() {
+	pauseGame = true
+	controlerSetup.classList.add("visible")
+	setController()
+}
+function hideController() {
+	pauseGame = false
+	controlerSetup.classList.remove("visible")
+	if (game) game.runGameLoop()
 }
 function hideSettings(e) {
 	e.preventDefault()
@@ -72,7 +87,8 @@ function startGame(event) {
 		randomCoord.y,
 		Math.random() * 2 * Math.PI,
 		randomColor(),
-		game.players.length
+		game.players.length,
+		'cat',
 	)
 
 	randomCoord = game.randomPlacement()
@@ -83,12 +99,12 @@ function startGame(event) {
 		randomCoord.y,
 		Math.random() * 2 * Math.PI,
 		randomColor(),
-		game.players.length
+		game.players.length,
 	)
 	game.players.push(player2)
 
 	game.runGameLoop()
-	// numberOfRays = event.target[4].value > 2000 ? 2000 : event.target[4].value
+	numberOfRays = event.target[4].value > 2000 ? 2000 : event.target[4].value
 }
 
 function keyDownlistener(event) {
@@ -131,23 +147,34 @@ function keyUpListener(event) {
 
 function connecthandler() {
 	for (let i = 0; i < navigator.getGamepads().length; i++) {
-		if (game.players[i])
-			game.players[i].controllerIndex = navigator.getGamepads()[i].index
-		else{
-			const newCoord = game.randomPlacement()
-			const newPlayer = new Player (
-				`player${game.players.length+1}`,
-				newCoord.x,
-				newCoord.y,
-				Math.random() * 2 * Math.PI,
-				randomColor(),
-				game.players.length
-			)
-			game.players.push(newPlayer)
-		}	
+		console.log('navigator.getGamepads()[i]',navigator.getGamepads()[i]);
+		if (navigator.getGamepads()[i]){
+			if (game.players[i+1])
+				game.players[i+1].controller = {
+					index: navigator.getGamepads()[i].index,
+					id : navigator.getGamepads()[i].id
+				}
+			else if (game.type === 'megaShooter'){
+				const newCoord = game.randomPlacement()
+				const newPlayer = new Player (
+					`player${game.players.length+1}`,
+					newCoord.x,
+					newCoord.y,
+					Math.random() * 2 * Math.PI,
+					randomColor(),
+					game.players.length
+				)
+				newPlayer.controller = {
+					index: navigator.getGamepads()[i].index,
+					id : navigator.getGamepads()[i].id
+				}
+				game.players.push(newPlayer)
+			}	
+		}
 	}
 }
-function disconnecthandler() {
+function disconnecthandler(event) {
+	console.log(event.gamepad)
 	for (let i = 0; i < navigator.getGamepads().length; i++) {
 		if (game.players[i])
 			game.players[i].controllerIndex = navigator.getGamepads()[i].index
