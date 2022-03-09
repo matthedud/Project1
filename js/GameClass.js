@@ -78,13 +78,10 @@ class Game {
 	}
 	runGameLoop() {
 		clearCanvas()
-		const wallRays = this.players.reduce(
-			(playerRay, player) => [...playerRay, ...getRay(player)],
-			[]
-		)
-		const player = showPlayer(this.players[0], this.players[1], wallRays)
-		// showPlayer(game.players[1], game.players[0], rays)
-		renderScene(wallRays, player)
+		const player1Rays = getRay(this.players[0], this.players[1])
+		const player2Rays = getRay(this.players[1], this.players[0])
+		const wallRays = [...player1Rays, ...player2Rays]
+		renderScene(wallRays)
 		for (const player of this.players) {
 			player.controlerMove(game)
 		}

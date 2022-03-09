@@ -8,7 +8,7 @@ function distance(x1, y1, x2, y2) {
 	return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
 }
 
-function getVCollision(angle, player) {
+function getVCollision(angle, player, playerCoord) {
 	const right = Math.abs(Math.floor((angle - Math.PI / 2) / Math.PI) % 2)
 	const firstX = right
 		? Math.floor(player.xPosition / game.cellWidth) * game.cellWidth +
@@ -21,6 +21,7 @@ function getVCollision(angle, player) {
 	const xStep = right ? game.cellWidth : -game.cellWidth
 	const yStep = xStep * Math.tan(angle)
 	let wall
+	let playerRay
 	let nextX = firstX
 	let nextY = firstY
 	while (!wall) {
@@ -37,16 +38,24 @@ function getVCollision(angle, player) {
 			nextY += yStep
 		}
 	}
+	const wallDistance = distance(
+		player.xPosition,
+		player.yPosition,
+		nextX,
+		nextY
+	)
+	playerRay = addPlayerRay(playerCoord, angle, wallDistance)
 	return {
 		angle,
-		distance: distance(player.xPosition, player.yPosition, nextX, nextY),
+		distance: wallDistance,
 		vertical: true,
 		player,
 		imageOffset: (nextY % game.cellheight) / game.cellheight,
+		playerRay,
 	}
 }
 
-function getHCollision(angle, player) {
+function getHCollision(angle, player, playerCoord) {
 	const up = Math.abs(Math.floor(angle / Math.PI) % 2)
 	const firstY = up
 		? Math.floor(player.yPosition / game.cellheight) * game.cellheight
@@ -60,6 +69,7 @@ function getHCollision(angle, player) {
 	const xStep = yStep / Math.tan(angle)
 
 	let wall
+	let playerRay
 	let nextX = firstX
 	let nextY = firstY
 	while (!wall) {
@@ -77,26 +87,49 @@ function getHCollision(angle, player) {
 			nextY += yStep
 		}
 	}
+	const wallDistance = distance(
+		player.xPosition,
+		player.yPosition,
+		nextX,
+		nextY
+	)
+	playerRay = addPlayerRay(playerCoord, angle, wallDistance)
 	return {
 		angle,
-		distance: distance(player.xPosition, player.yPosition, nextX, nextY),
+		distance: wallDistance,
 		imageOffset: (nextX % game.cellheight) / game.cellheight,
 		vertical: false,
 		player,
+		playerRay,
 	}
 }
 
-function castRay(angle, player, i) {
-	const vCollision = getVCollision(angle, player, i)
-	const hCollision = getHCollision(angle, player, i)
+function addPlayerRay(playerCoord, angle, wallDistance){
+	if (
+		playerCoord &&
+		angle > playerCoord?.initialAngle &&
+		angle < playerCoord?.endAngle &&
+		playerCoord?.distance < wallDistance
+	) {
+		const imageOffset = (angle - playerCoord.initialAngle)/(playerCoord.endAngle-playerCoord.initialAngle)
+		return  {...playerCoord, imageOffset}
+}
+}
+
+function castRay(angle, player, playerCoord) {
+	const vCollision = getVCollision(angle, player, playerCoord)
+	const hCollision = getHCollision(angle, player, playerCoord)
 	return hCollision.distance > vCollision.distance ? vCollision : hCollision
 }
 
-function renderScene(rays, playerRays) {
+function renderScene(rays) {
 	const wallImage = new Image()
 	// wallImage.src =
 	// 	"./Image/brick-wall-orange-wallpaper-patter_53876-138604.jpg"
 	wallImage.src = "./Image/WM_BrickWork-50_1024/WM_BrickWork-50_1024.png"
+	const gunMan = new Image()
+	gunMan.src = "./Image/drunken_duck_soldier_silhouette.svg"
+	
 	rays.forEach((ray, i) => {
 		const distance = fixFishEye(
 			ray.distance,
@@ -104,7 +137,6 @@ function renderScene(rays, playerRays) {
 			ray.player.direction
 		)
 		const wallHeight = ((game.cellheight * 5) / distance) * 277
-		ctx.fillStyle = ray.vertical ? colors.wall : colors.wallDark
 
 		ctx.drawImage(
 			wallImage,
@@ -117,6 +149,8 @@ function renderScene(rays, playerRays) {
 			canvasWidth / numberOfRays,
 			wallHeight
 		)
+
+		// ctx.fillStyle = ray.vertical ? colors.wall : colors.wallDark
 		// ctx.fillRect(
 		// 	((i / 2) * canvasWidth) / numberOfRays,
 		// 	canvasHeight / 2 - wallHeight / 2,
@@ -124,21 +158,6 @@ function renderScene(rays, playerRays) {
 		// 	wallHeight
 		// )
 
-		// const floorImage = new Image()
-		// floorImage.src =
-		// 	"./Image/FloorTreadPattern-3v2_UR_1024/FloorTreadPattern-3v2_UR_1024.png"
-
-		// ctx.drawImage(
-		// 	floorImage,
-		// 	(ray.imageOffset)*floorImage.width,
-		// 	0,
-		// 	1,
-		// 	floorImage.height,
-		// 	i,
-		// 	canvasHeight / 2 + wallHeight / 2,
-		// 	canvasWidth / numberOfRays,
-		// 	canvasHeight / 2 - wallHeight / 2
-		// )
 		ctx.fillStyle = colors.floor
 		ctx.fillRect(
 			((i / 2) * canvasWidth) / numberOfRays,
@@ -146,13 +165,39 @@ function renderScene(rays, playerRays) {
 			canvasWidth / numberOfRays,
 			canvasHeight / 2 - wallHeight / 2
 		)
+		ctx.fillStyle = "black"
+
+		if (ray.playerRay) {
+			// const y = ray.playerRay.imageOffset * gunMan.width
+			// console.log('imageOffset', y);
+			// ctx.drawImage(
+			// 	gunMan,
+			// 	y,
+			// 	0,
+			// 	1,
+			// 	ray.playerRay.height,
+			// 	(i * canvasWidth) / numberOfRays / 2,
+			// 	canvasHeight / 2 - ray.playerRay.height / 2,
+			// 	canvasWidth / numberOfRays,
+			// 	ray.playerRay.height
+			// )
+			ctx.fillRect(
+				((i / 2) * canvasWidth) / numberOfRays,
+				canvasHeight / 2 - ray.playerRay.height / 2,
+				canvasWidth / numberOfRays,
+				ray.playerRay.height
+			)
+		}
 	})
 
 	ctx.fillStyle = "black"
-	ctx.fillRect(canvasWidth / 2 - 3, canvasHeight * game.scale, 6, canvasHeight)
+	ctx.fillRect(
+		canvasWidth / 2 - 3,
+		canvasHeight * game.scale,
+		6,
+		canvasHeight
+	)
 
-	const gunMan = new Image()
-	gunMan.src = "./Image/drunken_duck_soldier_silhouette.svg"
 
 	const gunImage = new Image()
 	gunImage.src = "./Image/gun.png"
@@ -170,11 +215,7 @@ function renderScene(rays, playerRays) {
 		canvasWidth / 5,
 		canvasWidth / 5
 	)
-	
-	// console.log("playerRays", playerRays)
-	// playerRays.forEach((ray) => {
-	// 	ctx.fillRect(ray.x, ray.y, 2, ray.playerHeight)
-	// })
+
 }
 
 function fixFishEye(distance, angle, playerToPlayerAngle) {
@@ -182,95 +223,58 @@ function fixFishEye(distance, angle, playerToPlayerAngle) {
 	return distance * Math.cos(diff)
 }
 
-function getRay(player) {
-	const initialAngle = player.direction - FOV / 2
+function getRay(playerLooking, playerSeen) {
+	const playerCoord = getPlayerPosition(playerLooking, playerSeen)
+	const initialAngle = playerLooking.direction - FOV / 2
 	const angleStep = FOV / numberOfRays
 	const rays = []
 	for (let i = 0; i < numberOfRays; i++) {
 		const angle = initialAngle + i * angleStep
-		const ray = castRay(angle, player, i)
+		const ray = castRay(angle, playerLooking, playerCoord)
 		rays.push(ray)
 	}
 	return rays
 }
 
-function isInQuadrant(playerDirection, x1, y1, x2, y2) {
-	if (playerDirection >= 0 && playerDirection < Math.PI / 2)
-		if (y2 - y1 >= 0 && x2 - x1 >= 0) {
-			return true
-		}
-	if (playerDirection >= Math.PI / 2 && playerDirection < Math.PI)
-		if (y2 - y1 >= 0 && x2 - x1 <= 0) {
-			return true
-		}
-	if (playerDirection >= Math.PI && playerDirection < (Math.PI * 3) / 2) {
-		if (y2 - y1 <= 0 && x2 - x1 <= 0) {
-			return true
-		}
-	}
-	if (playerDirection >= (Math.PI * 3) / 2 && playerDirection < Math.PI * 2)
-		if (y2 - y1 <= 0 && x2 - x1 >= 0) {
-			return true
-		}
-	return false
+function getPlayerToPlayerAngle(playerLooking, playerSeen) {
+	const tanAngle = Math.atan2(
+		playerSeen.yPosition - playerLooking.yPosition,
+		playerSeen.xPosition - playerLooking.xPosition
+	)
+	const playerToPlayerAngle = tanAngle + Math.PI * 2 * (tanAngle<0)
+	return playerToPlayerAngle
 }
 
-function showPlayer(playerView, playerSeen, rays) {
-	const playerDirection = playerView.direction
-	const playerRays = []
+function getPlayerPosition(playerLooking, playerSeen) {
+	const playerDirection = playerLooking.direction
+	const playerDistance = distance(
+		playerLooking.xPosition,
+		playerLooking.yPosition,
+		playerSeen.xPosition,
+		playerSeen.yPosition
+	)
+	const playerToPlayerAngle = getPlayerToPlayerAngle(
+		playerLooking,
+		playerSeen
+	)
 	if (
-		isInQuadrant(
-			playerDirection,
-			playerView.xPosition,
-			playerView.yPosition,
-			playerSeen.xPosition,
-			playerSeen.yPosition
-		)
+		playerToPlayerAngle > playerDirection - FOV / 2 &&
+		playerToPlayerAngle < playerDirection + FOV / 2
 	) {
-		const playerToPlayerAngle =
-			Math.PI / 2 -
-			Math.atan(
-				Math.abs(playerSeen.yPosition - playerView.yPosition) /
-					Math.abs(playerSeen.xPosition - playerView.xPosition)
-			)
-		if (
-			playerToPlayerAngle > (playerDirection % (Math.PI / 2)) - FOV / 2 &&
-			playerToPlayerAngle < (playerDirection % (Math.PI / 2)) + FOV / 2
-		) {
-			const playerDistance = distance(
-				playerView.xPosition,
-				playerView.yPosition,
-				playerSeen.xPosition,
-				playerSeen.yPosition
-			)
-
-			const playerSeenWidth = ((playerSize * 10) / playerDistance) * 277
-			const viewAngle =
-				Math.atan(playerSeenWidth / 2 / playerDistance) * 2
-			// console.log("playerSeenWidth", playerSeenWidth)
-			// console.log("viewAngle", viewAngle)
-			const initialAngle = playerToPlayerAngle - viewAngle / 2
-
-			const angleStep = viewAngle / playerSeenWidth
-			for (let i = 1; i <= playerSeenWidth; i++) {
-				const angle = initialAngle + i * angleStep
-				const x =  (angle / FOV) * (canvasWidth /2)
-				const playerHeight =
-					((game.cellheight * 5) / playerDistance) * 277
-				const y = canvasHeight / 2 - playerHeight / 2
-				playerRays.push({
-					x,
-					y,
-					angle,
-					distance: playerDistance,
-					imageOffset: i / playerSeenWidth,
-					playerHeight,
-					player: playerSeen,
-				})
-			}
+		const playerWidth = (playerSize * 50) / playerDistance
+		const playerHeight = ((playerSize * 5) / playerDistance) * 277
+		const viewAngle = Math.atan(playerWidth / 2 / playerDistance)
+		const initialAngle = playerToPlayerAngle - viewAngle / 2
+		const endAngle = playerToPlayerAngle + viewAngle / 2
+		return {
+			initialAngle,
+			endAngle,
+			distance: playerDistance,
+			height: playerHeight,
+			width: playerWidth,
 		}
 	}
-	return playerRays
+	return false
 }
 
 function clearCanvas() {
