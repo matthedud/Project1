@@ -1,7 +1,7 @@
 const playerSize = 6
 const turnSpeed = 0.05
 const moveSpeed = 2
-const FOV = (40 * Math.PI) / 180
+const FOV = (30 * Math.PI) / 180
 
 class Player {
 	constructor(
