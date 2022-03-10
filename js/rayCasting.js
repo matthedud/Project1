@@ -125,9 +125,9 @@ function castRay(angle, player, playerCoord) {
 
 function renderScene(rays) {
 	const wallImage = new Image()
-	wallImage.src =
-		"./Image/wall/brick-wall-orange-wallpaper-patter_53876-138604.jpg"
-	// wallImage.src = "./Image/wall/pics/greystone.png"
+	// wallImage.src =
+	// 	"./Image/wall/brick-wall-orange-wallpaper-patter_53876-138604.jpg"
+	wallImage.src = "./Image/wall/pics/greystone.png"
 	// wallImage.src = "./Image/wall/WM_BrickWork-50_1024.png"
 
 	const skyImage = new Image()
