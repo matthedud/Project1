@@ -136,7 +136,8 @@ function startGame(event) {
 			player.yPosition = randomCoord.y
 		}
 	}
-	game.frameRate = event.target[5].value > 200 ? 200 : 1/( Number(event.target[5].value)*1000)
+	game.frameRate = event.target[5].value > 200 ? 200 : (1/ Number(event.target[5].value)*1000)
+	console.log('game.frameRate', game.frameRate);
 	game.players = players
 	game.runGameLoop()
 	game.chronometer.start(clockEl)
