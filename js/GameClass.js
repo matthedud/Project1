@@ -7,6 +7,7 @@ class Game {
 		this.cellheight = (this.scale * canvasHeight) / grid2D.length
 		this.xOffset = canvasWidth / 2 - (canvasWidth * this.scale) / 2
 		this.gameInterval = null
+		this.frameRate = 15
 		this.chronometer = new Chronometer()
 	}
 	drawMaze(rays) {
@@ -91,16 +92,23 @@ class Game {
 		this.bullets = []
 	}
 	runGameLoop() {
-		clearCanvas()
-		const player1Rays = getRay(this.players[0], [this.players[1]])
-		const player2Rays = getRay(this.players[1], [this.players[0]])
-		const wallRays = [...player1Rays, ...player2Rays]
-		renderScene(wallRays)
-		for (const player of this.players) {
-			player.setMove(game)
-		}
-		this.drawMaze(wallRays)
-		if (!pauseGame) window.requestAnimationFrame(() => this.runGameLoop())
+		this.gameInterval = setInterval(() => {
+			clearCanvas()
+			const player1Rays = getRay(this.players[0], [this.players[1]])
+			const player2Rays = getRay(this.players[1], [this.players[0]])
+			const wallRays = [...player1Rays, ...player2Rays]
+			renderScene(wallRays)
+			for (const player of this.players) {
+				player.setMove(game)
+			}
+			this.drawMaze(wallRays)
+			// if (!pauseGame) window.requestAnimationFrame(() => this.runGameLoop())
+		}, this.frameRate)
+	}
+	pauseGame(){
+		this.chronometer.stop()
+		clearInterval(this.gameInterval)
+		this.gameInterval=null
 	}
 }
 
@@ -141,15 +149,17 @@ class Tag extends Game {
 		this.cat = null
 	}
 	runGameLoop() {
-		clearCanvas()
-		const player1Rays = getRay(this.players[0], [this.players[1]])
-		const wallRays = [...player1Rays, ...player2Rays]
-		renderScene(wallRays)
-		for (const player of this.players) {
-			player.setMove(game)
-		}
-		this.drawMaze(wallRays)
-		if (!pauseGame) window.requestAnimationFrame(() => this.runGameLoop())
+		this.gameInterval = setInterval(() => {
+			clearCanvas()
+			const player1Rays = getRay(this.players[0], [this.players[1]])
+			const wallRays = [...player1Rays, ...player2Rays]
+			renderScene(wallRays)
+			for (const player of this.players) {
+				player.setMove(game)
+			}
+			this.drawMaze(wallRays)
+			// if (!pauseGame) window.requestAnimationFrame(() => this.runGameLoop())
+		}, this.frameRate)
 	}
 }
 
@@ -165,21 +175,24 @@ class MegaShooter extends Shooter {
 	}
 
 	runGameLoop() {
-		clearCanvas()
-		for (const player of this.players) {
-			player.setMove(game)
-		}
-		this.drawMaze()
-		if (!pauseGame) window.requestAnimationFrame(() => this.runGameLoop())
+		this.gameInterval = setInterval(() => {
+			clearCanvas()
+			for (const player of this.players) {
+				player.setMove(game)
+			}
+			this.drawMaze()
+			// if (!pauseGame)
+			// 	window.requestAnimationFrame(() => this.runGameLoop())
+		}, this.frameRate)
 	}
 	resetGame(player) {
-		const index = this.players.findIndex(el=>el.id===player.id)
+		const index = this.players.findIndex((el) => el.id === player.id)
 		this.players.splice(index, 1)
 		this.deadPlayers.push(player)
 		if (this.players.length < 2) {
 			this.players[0].score += 5
 			const length = this.deadPlayers.length
-			for (let i=0; i< length; i++) {
+			for (let i = 0; i < length; i++) {
 				this.players.push(this.deadPlayers[0])
 				this.deadPlayers.shift()
 			}
@@ -187,7 +200,7 @@ class MegaShooter extends Shooter {
 		}
 	}
 	drawScore() {
-		ctx.fillStyle = 'white'
+		ctx.fillStyle = "white"
 		ctx.font = "48px serif"
 		for (let i = 0; i < this.players.length; i++) {
 			ctx.fillText(

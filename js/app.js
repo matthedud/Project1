@@ -48,22 +48,19 @@ closeControllerButton.addEventListener("click", hideController)
 form.addEventListener("submit", startGame)
 
 function showSettings() {
-	game?.chronometer?.stop()
-	pauseGame = true
+	game?.pauseGame()
 	controllerButton.disabled = true
 	form.classList.add("visible")
 }
 function showController() {
 	if(game){
-		game.chronometer.stop()
-		pauseGame = true
+		game?.pauseGame()
 		controlerSetup.classList.add("visible")
 		settingsButton.disabled = true
 		setController()
 	}
 }
 function hideController() {
-	pauseGame = false
 	settingsButton.disabled = false
 	controlerSetup.classList.remove("visible")
 	if (game){
@@ -74,7 +71,6 @@ function hideController() {
 function hideSettings(e) {
 	if(e?.preventDefault) e.preventDefault()
 	controllerButton.disabled = false
-	pauseGame = false
 	form.classList.remove("visible")
 	if (game){
 		game.chronometer.start(clockEl)
@@ -89,6 +85,7 @@ function startGame(event) {
 	controllerButton.disabled = false
 	const map = maze[event.target[3].value]
 	const players = game?.players ? game.players : []
+	game?.pauseGame()
 	switch (event.target[0].value) {
 		case "1":
 			game = new Shooter(map)
