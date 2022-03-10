@@ -125,28 +125,10 @@ function castRay(angle, player, playerCoord) {
 	return hCollision.distance > vCollision.distance ? vCollision : hCollision
 }
 
-function renderScene(rays) {
-	const wallImage = new Image()
-	// wallImage.src =
-	// 	"./Image/wall/brick-wall-orange-wallpaper-patter_53876-138604.jpg"
-	wallImage.src = "./Image/wall/pics/greystone.png"
-	// wallImage.src = "./Image/wall/WM_BrickWork-50_1024.png"
-	// wallImage.src = "./Image/wall/pics/mossy.png"
-
-	const skyImage = new Image()
-	skyImage.src = "./Image/back/panorama_landscapes_175.jpg"
-
-	const gunMan = new Image()
-	gunMan.src = "./Image/player/cowboy.gif"
-
-	const floorGradient = ctx.createLinearGradient(0,0, canvasWidth, canvasHeight);
-	floorGradient.addColorStop(0, colors.floor);
-	floorGradient.addColorStop(.5, 'rgb(44, 44, 44)');
-	floorGradient.addColorStop(1, colors.floor);
-
+function drawDynamicBackgroung(player1Direction, player2Direction, skyImage) {
 	ctx.drawImage(
 		skyImage,
-		(game.players[0].direction / (2 * Math.PI)) * skyImage.width,
+		(playerDirection / (2 * Math.PI)) * skyImage.width,
 		0,
 		(skyImage.width * FOV) / (2 * Math.PI),
 		skyImage.height,
@@ -155,6 +137,7 @@ function renderScene(rays) {
 		canvasWidth / 2,
 		canvasHeight
 	)
+
 	ctx.drawImage(
 		skyImage,
 		(game.players[1].direction / (2 * Math.PI)) * skyImage.width,
@@ -166,6 +149,113 @@ function renderScene(rays) {
 		canvasWidth,
 		canvasHeight
 	)
+}
+
+function setFloorGradient() {
+	const floorGradient = ctx.createLinearGradient(
+		0,
+		0,
+		canvasWidth,
+		canvasHeight
+	)
+	floorGradient.addColorStop(0, colors.floor)
+	floorGradient.addColorStop(0.5, "rgb(44, 44, 44)")
+	floorGradient.addColorStop(1, colors.floor)
+	return floorGradient
+}
+
+function drawWallRay(wallImage, ray, wallHeight) {
+	if (!ray.vertical) {
+		ctx.fillStyle = "black"
+		ctx.fillRect(
+			(i * canvasWidth) / numberOfRays / 2,
+			canvasHeight / 2 - wallHeight / 2,
+			canvasWidth / numberOfRays,
+			wallHeight
+		)
+	}
+	ctx.globalAlpha = ray.vertical ? 1 : 0.5
+	ctx.drawImage(
+		wallImage,
+		ray.imageOffset * wallImage.width,
+		0,
+		1,
+		wallImage.height,
+		(i * canvasWidth) / numberOfRays / 2,
+		canvasHeight / 2 - wallHeight / 2,
+		canvasWidth / numberOfRays,
+		wallHeight / 2
+	)
+	ctx.drawImage(
+		wallImage,
+		ray.imageOffset * wallImage.width,
+		0,
+		1,
+		wallImage.height,
+		(i * canvasWidth) / numberOfRays / 2,
+		canvasHeight / 2,
+		canvasWidth / numberOfRays,
+		wallHeight / 2
+	)
+	ctx.globalAlpha = 1
+}
+
+function drawPlayerRay(ray, gunMan){
+	const x = ray.playerRay.imageOffset * gunMan.width
+	ctx.drawImage(
+		gunMan,
+		x,
+		0,
+		1,
+		gunMan.height,
+		(i * canvasWidth) / numberOfRays / 2,
+		canvasHeight / 2 - ray.playerRay.height / 5,
+		canvasWidth / numberOfRays,
+		ray.playerRay.height
+	)
+}
+
+function drawFloorRay(floorGradient, wallHeight){
+	ctx.fillStyle = floorGradient
+	ctx.fillRect(
+		((i / 2) * canvasWidth) / numberOfRays,
+		canvasHeight / 2 + wallHeight / 2,
+		canvasWidth / numberOfRays,
+		canvasHeight / 2 - wallHeight / 2
+	)
+}
+
+function drawPlayerGun(player){
+	ctx.drawImage(
+		player.gunImage,
+		player.gunImageIndex,
+		50,
+		100,
+		200,
+		canvasWidth / 4 - 50 + (player.index * (2 * canvasWidth)) / 4,
+		(3 * canvasHeight) / 5,
+		canvasWidth / 5,
+		canvasWidth / 3
+	)
+}
+
+function renderScene(rays) {
+	const skyImage = new Image()
+	skyImage.src = "./Image/back/panorama_landscapes_175.jpg"
+	const gunMan = new Image()
+	gunMan.src = "./Image/player/cowboy.gif"
+	const wallImage = new Image()
+	wallImage.src = "./Image/wall/pics/greystone.png"
+	// wallImage.src = "./Image/wall/WM_BrickWork-50_1024.png"
+	// wallImage.src = "./Image/wall/pics/mossy.png"
+
+	const floorGradient = setFloorGradient()
+
+	drawDynamicBackgroung(
+		game.players[0].direction,
+		game.players[1].direction,
+		skyImage
+	)
 
 	rays.forEach((ray, i) => {
 		const distance = fixFishEye(
@@ -174,61 +264,12 @@ function renderScene(rays) {
 			ray.player.direction
 		)
 		const wallHeight = ((game.cellheight * 5) / distance) * 277
-			ctx.fillStyle = "black"
-			ctx.fillRect(
-				(i * canvasWidth) / numberOfRays / 2,
-				canvasHeight / 2 - wallHeight / 2,
-				canvasWidth / numberOfRays,
-				wallHeight
-			)
-		ctx.globalAlpha = (ray.vertical? 1 :  0.5 )
-		ctx.drawImage(
-			wallImage,
-			ray.imageOffset * wallImage.width,
-			0,
-			1,
-			wallImage.height,
-			(i * canvasWidth) / numberOfRays / 2,
-			canvasHeight / 2 - wallHeight / 2,
-			canvasWidth / numberOfRays,
-			wallHeight/2
-		)
-		ctx.drawImage(
-			wallImage,
-			ray.imageOffset * wallImage.width,
-			0,
-			1,
-			wallImage.height,
-			(i * canvasWidth) / numberOfRays / 2,
-			canvasHeight / 2 ,
-			canvasWidth / numberOfRays,
-			wallHeight/2
-		)
-		ctx.globalAlpha = 1
 
-		ctx.fillStyle = floorGradient
-		ctx.fillRect(
-			((i / 2) * canvasWidth) / numberOfRays,
-			canvasHeight / 2 + wallHeight / 2,
-			canvasWidth / numberOfRays,
-			canvasHeight / 2 - wallHeight / 2
-		)
-		ctx.fillStyle = "black"
+		drawWallRay(wallImage, ray, wallHeight)
 
-		if (ray.playerRay) {
-			const x = ray.playerRay.imageOffset * gunMan.width
-			ctx.drawImage(
-				gunMan,
-				x,
-				0,
-				1,
-				gunMan.height,
-				(i * canvasWidth) / numberOfRays / 2,
-				canvasHeight / 2 - ray.playerRay.height / 5,
-				canvasWidth / numberOfRays,
-				ray.playerRay.height
-			)
-		}
+		drawFloorRay(floorGradient, wallHeight)
+
+		if (ray.playerRay) drawPlayerRay(ray, gunMan)
 	})
 
 	ctx.fillStyle = "black"
@@ -240,17 +281,7 @@ function renderScene(rays) {
 	)
 
 	for (const player of game.players) {
-		ctx.drawImage(
-			player.gunImage,
-			player.gunImageIndex,
-			50,
-			100,
-			200,
-			canvasWidth / 4 - 50 + (player.index * (2 * canvasWidth)) / 4,
-			(3 * canvasHeight) / 5,
-			canvasWidth / 5,
-			canvasWidth / 3
-		)
+		drawPlayerGun(player)
 	}
 }
 
