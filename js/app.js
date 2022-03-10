@@ -128,6 +128,7 @@ function startGame(event) {
 	game.runGameLoop()
 	game.chronometer.start(clockEl)
 	numberOfRays = event.target[4].value > 2000 ? 2000 : event.target[4].value
+	game.frameRate = event.target[5].value < 1 ? 1 : event.target[5].value
 }
 
 function randomColor(){
