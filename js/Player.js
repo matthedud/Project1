@@ -1,4 +1,4 @@
-const playerSize = 5
+const playerSize = 6
 const turnSpeed = 0.05
 const moveSpeed = 2
 const FOV = (40 * Math.PI) / 180

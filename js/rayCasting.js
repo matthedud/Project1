@@ -239,51 +239,6 @@ function drawPlayerGun(player){
 	)
 }
 
-function renderScene(rays) {
-	const skyImage = new Image()
-	skyImage.src = "./Image/back/panorama_landscapes_175.jpg"
-	const gunMan = new Image()
-	gunMan.src = "./Image/player/cowboy.gif"
-	const wallImage = new Image()
-	wallImage.src = "./Image/wall/pics/greystone.png"
-	// wallImage.src = "./Image/wall/WM_BrickWork-50_1024.png"
-	// wallImage.src = "./Image/wall/pics/mossy.png"
-
-	const floorGradient = setFloorGradient()
-
-	drawDynamicBackgroung(
-		game.players[0].direction,
-		game.players[1].direction,
-		skyImage
-	)
-
-	rays.forEach((ray, i) => {
-		const distance = fixFishEye(
-			ray.distance,
-			ray.angle,
-			ray.player.direction
-		)
-		const wallHeight = ((game.cellheight * 5) / distance) * 277
-
-		drawWallRay(wallImage, ray, wallHeight, i)
-
-		drawFloorRay(floorGradient, wallHeight, i)
-
-		if (ray.playerRay) drawPlayerRay(ray, gunMan, i)
-	})
-
-	ctx.fillStyle = "black"
-	ctx.fillRect(
-		canvasWidth / 2 - 3,
-		canvasHeight * game.scale,
-		6,
-		canvasHeight
-	)
-
-	for (const player of game.players) {
-		drawPlayerGun(player)
-	}
-}
 
 function fixFishEye(distance, angle, playerToPlayerAngle) {
 	const diff = angle - playerToPlayerAngle
@@ -350,4 +305,50 @@ function getPlayerPosition(playerLooking, playerSeenList) {
 
 function clearCanvas() {
 	ctx.clearRect(0, 0, canvasWidth, canvasHeight)
+}
+
+function renderScene(rays) {
+	const skyImage = new Image()
+	skyImage.src = "./Image/back/panorama_landscapes_175.jpg"
+	const gunMan = new Image()
+	gunMan.src = "./Image/player/cowboy.gif"
+	const wallImage = new Image()
+	wallImage.src = "./Image/wall/pics/greystone.png"
+	// wallImage.src = "./Image/wall/WM_BrickWork-50_1024.png"
+	// wallImage.src = "./Image/wall/pics/mossy.png"
+
+	const floorGradient = setFloorGradient()
+
+	drawDynamicBackgroung(
+		game.players[0].direction,
+		game.players[1].direction,
+		skyImage
+	)
+
+	rays.forEach((ray, i) => {
+		const distance = fixFishEye(
+			ray.distance,
+			ray.angle,
+			ray.player.direction
+		)
+		const wallHeight = ((game.cellheight * 5) / distance) * 277
+
+		drawWallRay(wallImage, ray, wallHeight, i)
+
+		drawFloorRay(floorGradient, wallHeight, i)
+
+		if (ray.playerRay) drawPlayerRay(ray, gunMan, i)
+	})
+
+	ctx.fillStyle = "black"
+	ctx.fillRect(
+		canvasWidth / 2 - 3,
+		canvasHeight * game.scale,
+		6,
+		canvasHeight
+	)
+
+	for (const player of game.players) {
+		drawPlayerGun(player)
+	}
 }

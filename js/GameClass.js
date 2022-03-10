@@ -126,7 +126,7 @@ class Shooter extends Game {
 	drawMaze(rays) {
 		super.drawMaze(rays)
 		this.bullets.forEach((bullet) => {
-			bullet.draw(this.xOffset)
+			bullet.draw(this.xOffset, this.scale)
 		})
 		this.drawScore()
 	}
