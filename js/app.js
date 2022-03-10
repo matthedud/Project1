@@ -23,7 +23,7 @@ const ctx = canvas.getContext("2d")
 parentEl.appendChild(canvas)
 
 const colors = {
-	floor: "rgb(64, 64, 77)",
+	floor: "rgb(28, 45, 121)",
 	wall: "#013aa6",
 	wallDark: "#012975",
 	rays: "#ffa600",

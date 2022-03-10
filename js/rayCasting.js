@@ -129,11 +129,52 @@ function renderScene(rays) {
 		// "./Image/wall/brick-wall-orange-wallpaper-patter_53876-138604.jpg"
 	// wallImage.src = "./Image/wall/pics/greystone.png"
 	wallImage.src = "./Image/wall/WM_BrickWork-50_1024.png"
+
+	const skyImage = new Image()
+	skyImage.src = "./Image/back/panorama_landscapes_175.jpg"
+	const floorImage = new Image()
+	floorImage.src = "./Image/back/WM_Marble-125_1024.png"
+	// '../Image/back/panorama_landscapes_175.jpg'
 	
 	const gunMan = new Image()
 	// gunMan.src = "./Image/player/stability_officer_sheet_palette.png"
 	gunMan.src = "./Image/player/cowboy.gif"
 	
+	ctx.drawImage(
+		skyImage,
+		game.players[0].direction/(2*Math.PI) * wallImage.width,
+		0,
+		wallImage.width * FOV/(2*Math.PI),
+		wallImage.height,
+		0,
+		0,
+		canvasWidth/2,
+		canvasHeight/2
+	)
+	// ctx.drawImage(
+	// 	floorImage,
+	// 	game.players[0].direction/(2*Math.PI) * floorImage.width,
+	// 	0,
+	// 	floorImage.width * FOV/(2*Math.PI),
+	// 	floorImage.height,
+	// 	0,
+	// 	canvasHeight/2,
+	// 	canvasWidth/2,
+	// 	canvasHeight
+	// )
+	ctx.drawImage(
+		skyImage,
+		game.players[1].direction/(2*Math.PI) * wallImage.width,
+		0,
+		wallImage.width * FOV/(2*Math.PI),
+		wallImage.height,
+		canvasWidth/2,
+		0,
+		canvasWidth,
+		canvasHeight/2
+	)
+
+
 	rays.forEach((ray, i) => {
 		const distance = fixFishEye(
 			ray.distance,
@@ -250,7 +291,7 @@ function getPlayerPosition(playerLooking, playerSeenList) {
 			playerToPlayerAngle > playerDirection - FOV / 2 &&
 			playerToPlayerAngle < playerDirection + FOV / 2
 		) {
-			const playerWidth = (playerSize * 100) / playerDistance
+			const playerWidth = (playerSize * 150) / playerDistance
 			const playerHeight = ((playerSize * 9) / playerDistance) * 277
 			const viewAngle = Math.atan(playerWidth / 2 / playerDistance)
 			const initialAngle = playerToPlayerAngle - viewAngle / 2

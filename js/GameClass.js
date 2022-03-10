@@ -185,6 +185,7 @@ class MegaShooter extends Shooter {
 		}
 	}
 	drawScore() {
+		ctx.fillStyle = 'white'
 		ctx.font = "48px serif"
 		for (let i = 0; i < this.players.length; i++) {
 			ctx.fillText(

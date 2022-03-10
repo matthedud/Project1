@@ -10,6 +10,7 @@ body{
     justify-content: center;
     align-content: center;
     background-image: url(../Image/Floor/FloorTreadPattern-3v2_UR_1024.png);
+    /* background-image: url(../Image/Floor/FloorTreadPattern-3v2_UR_1024.png); */
 }
 
 h1{
@@ -35,7 +36,8 @@ button{
 
 canvas{
     border: 5px black solid ;
-    background: url('../Image/back/panorama_landscapes_175.jpg');
+    background: url('../Image/back/pexels-elia-clerici-912110.jpg');
+    background-size: cover;
 }
 
 .modal{
