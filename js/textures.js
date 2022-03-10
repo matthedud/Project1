@@ -22,5 +22,6 @@ const WallTextures= [
 
 const playerTexture = [
     "./Image/player/cowboy.gif",
-    "./Image/player/_Gunman-512.webp"
+    "./Image/player/GunnMan.webp",
+    "../Image/player/shadow-GunnMan.png",
 ]

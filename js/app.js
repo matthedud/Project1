@@ -137,7 +137,6 @@ function startGame(event) {
 		}
 	}
 	game.frameRate = event.target[5].value > 200 ? 200 : (1/ Number(event.target[5].value)*1000)
-	console.log('game.frameRate', game.frameRate);
 	game.players = players
 	game.runGameLoop()
 	game.chronometer.start(clockEl)
@@ -148,10 +147,6 @@ function setTexture(backIndex, wallIndex, playerIndex){
 	skyImage.src = backGroundTextures[backIndex]
 	gunMan.src = playerTexture[playerIndex]
 	wallImage.src = WallTextures[wallIndex]
-	console.log('backIndex, wallIndex, playerIndex', backIndex, wallIndex, playerIndex);
-	console.log('skyImage', backGroundTextures[backIndex]);
-	console.log('gunMan', playerTexture[playerIndex]);
-	console.log('wallImage', WallTextures[wallIndex]);
 }
 
 function randomColor(){
