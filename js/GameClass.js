@@ -7,6 +7,7 @@ class Game {
 		this.cellheight = (this.scale * canvasHeight) / grid2D.length
 		this.xOffset = canvasWidth / 2 - (canvasWidth * this.scale) / 2
 		this.gameInterval = null
+		this.frameRate = 30
 	}
 	drawMaze(rays) {
 		this.grid2D.forEach((line, lineInd) => {
@@ -79,10 +80,6 @@ class Game {
 	}
 	resetGame() {
 		deadSound.play()
-		// player.name = window.prompt(
-		// 	`${player.name} lost, name him:`,
-		// 	player.name
-		// )
 		for (const keyboard of keyboards) {
 			keyboard.resetKeyboard()
 		}
@@ -94,16 +91,24 @@ class Game {
 		this.bullets = []
 	}
 	runGameLoop() {
-		clearCanvas()
-		const player1Rays = getRay(this.players[0], [this.players[1]])
-		const player2Rays = getRay(this.players[1], [this.players[0]])
-		const wallRays = [...player1Rays, ...player2Rays]
-		renderScene(wallRays)
-		for (const player of this.players) {
-			player.setMove(game)
+		setInterval(()=>{
+			clearCanvas()
+			const player1Rays = getRay(this.players[0], [this.players[1]])
+			const player2Rays = getRay(this.players[1], [this.players[0]])
+			const wallRays = [...player1Rays, ...player2Rays]
+			renderScene(wallRays)
+			for (const player of this.players) {
+				player.setMove(game)
+			}
+			this.drawMaze(wallRays)
+			// if (!pauseGame) window.requestAnimationFrame(() => this.runGameLoop())
+		}, this.frameRate)
+	}
+	pauseGame(){
+		if(this.gameInterval){
+			clearInterval(this.gameInterval)
+			this.gameInterval = null
 		}
-		this.drawMaze(wallRays)
-		if (!pauseGame) window.requestAnimationFrame(() => this.runGameLoop())
 	}
 }
 
@@ -168,12 +173,13 @@ class MegaShooter extends Shooter {
 	}
 
 	runGameLoop() {
-		clearCanvas()
-		for (const player of this.players) {
-			player.setMove(game)
-		}
-		this.drawMaze()
-		if (!pauseGame) window.requestAnimationFrame(() => this.runGameLoop())
+		this.gameInterval = setInterval(()=>{
+			clearCanvas()
+			for (const player of this.players) {
+				player.setMove(game)
+			}
+			this.drawMaze()
+		}, this.frameRate)
 	}
 	resetGame(player) {
 		const index = this.players.findIndex(el=>el.id===player.id)
