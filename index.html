@@ -86,7 +86,7 @@
 				<option value="0">Map 1</option>
 				<option value="1">Map 2</option>
 				<option value="2">Map 3</option>
-				<option value="2">Map 4</option>
+				<option value="3">Map 4</option>
 				<!-- <option value="2">Map 3</option> -->
 			</select>
 			<label for="resolution">Résolition (max 2000)</label>
@@ -105,6 +105,31 @@
 				value="30"
 				required
 			/>
+			<label for="background">Select background</label>
+			<select id="background" type="text" required>
+				<option value="0">Moutains</option>
+				<option value="1">Blue sky</option>
+				<option value="2">Red and Blue</option>
+				<option value="3">Other Mountains</option>
+				<!-- <option value="2">Map 3</option> -->
+			</select>
+			<label for="wall">Select Wall</label>
+			<select id="wall" type="text" required>
+				<option value="0">Graysone</option>
+				<option value="1">Grey Brick</option>
+				<option value="2">Mossy</option>
+				<option value="3">Brick</option>
+				<option value="4">Real brick</option>
+				<option value="5">Blue</option>
+				<option value="6">Wood</option>
+				<!-- <option value="2">Map 3</option> -->
+			</select>
+			<label for="player">Select Player Avatar</label>
+			<select id="player" type="text" required>
+				<option value="0">Cowboy</option>
+				<option value="1">Gunman</option>
+				<!-- <option value="2">Map 3</option> -->
+			</select>
 
 			<button id="btn-start" type="submit" value="Submit">
 				restart game
@@ -119,7 +144,8 @@
 			</div>
 			<button id="btn-close">Close</button>
 		</div>
-		<script src="js/keybord.js"></script>
+		<script src="js/keyboard.js"></script>
+		<script src="js/textures.js"></script>
 		<script src="js/chronometer.js"></script>
 		<script src="js/Bullet.js"></script>
 		<script src="js/Player.js"></script>

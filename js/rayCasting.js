@@ -239,7 +239,6 @@ function drawPlayerGun(player){
 	)
 }
 
-
 function fixFishEye(distance, angle, playerToPlayerAngle) {
 	const diff = angle - playerToPlayerAngle
 	return distance * Math.cos(diff)
@@ -308,15 +307,7 @@ function clearCanvas() {
 }
 
 function renderScene(rays) {
-	const skyImage = new Image()
-	skyImage.src = "./Image/back/panorama_landscapes_175.jpg"
-	const gunMan = new Image()
-	gunMan.src = "./Image/player/cowboy.gif"
-	// gunMan.src = "./Image/player/_Gunman-512.webp"
-	const wallImage = new Image()
-	wallImage.src = "./Image/wall/pics/greystone.png"
-	// wallImage.src = "./Image/wall/WM_BrickWork-50_1024.png"
-	// wallImage.src = "./Image/wall/pics/mossy.png"
+
 
 	const floorGradient = setFloorGradient()
 

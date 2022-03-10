@@ -26,6 +26,8 @@ const ctx = canvas.getContext("2d")
 
 parentEl.appendChild(canvas)
 
+
+
 const colors = {
 	floor: "rgb(126, 126, 126)",
 	wall: "#013aa6",
@@ -84,6 +86,9 @@ function startGame(event) {
 	backgroundMusic.play();
 	controllerButton.disabled = false
 	const map = maze[event.target[3].value]
+
+	setTexture(event.target[6].value, event.target[7].value, event.target[8].value)
+
 	const players = game?.players ? game.players : []
 	game?.pauseGame()
 	switch (event.target[0].value) {
@@ -136,6 +141,16 @@ function startGame(event) {
 	game.runGameLoop()
 	game.chronometer.start(clockEl)
 	numberOfRays = event.target[4].value > 2000 ? 2000 : Number(event.target[4].value)
+}
+
+function setTexture(backIndex, wallIndex, playerIndex){
+	skyImage.src = backGroundTextures[backIndex]
+	gunMan.src = playerTexture[playerIndex]
+	wallImage.src = WallTextures[wallIndex]
+	console.log('backIndex, wallIndex, playerIndex', backIndex, wallIndex, playerIndex);
+	console.log('skyImage', backGroundTextures[backIndex]);
+	console.log('gunMan', playerTexture[playerIndex]);
+	console.log('wallImage', WallTextures[wallIndex]);
 }
 
 function randomColor(){
