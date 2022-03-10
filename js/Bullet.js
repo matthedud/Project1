@@ -24,10 +24,6 @@ class Bullet {
         const player = maze.isPlayer(newXposition, newYposition)
 		if (player) {
 			this.player.score++
-            player.name = window.prompt(
-                `${player.name} lost, name him:`,
-                player.name
-            )
 			maze.resetGame(player)
 		} else if (!maze.isWall(newXposition, newYposition)) {
 			this.xPosition = newXposition

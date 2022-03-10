@@ -78,6 +78,11 @@ class Game {
 		return false
 	}
 	resetGame() {
+		deadSound.play()
+		// player.name = window.prompt(
+		// 	`${player.name} lost, name him:`,
+		// 	player.name
+		// )
 		for (const keyboard of keyboards) {
 			keyboard.resetKeyboard()
 		}

@@ -49,22 +49,26 @@ form.addEventListener("submit", startGame)
 
 function showSettings() {
 	pauseGame = true
+	controllerButton.disabled = true
 	form.classList.add("visible")
 }
 function showController() {
 	if(game){
 		pauseGame = true
 		controlerSetup.classList.add("visible")
+		settingsButton.disabled = true
 		setController()
 	}
 }
 function hideController() {
 	pauseGame = false
+	settingsButton.disabled = false
 	controlerSetup.classList.remove("visible")
 	if (game) game.runGameLoop()
 }
 function hideSettings(e) {
 	e.preventDefault()
+	controllerButton.disabled = false
 	pauseGame = false
 	form.classList.remove("visible")
 	if (game) game.runGameLoop()
