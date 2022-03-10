@@ -14,15 +14,15 @@ let numberOfRays = canvasWidth / 2
 let pauseGame = true
 const keyboards = [new KeyBoard("K1"), new KeyBoard("K2")]
 
-// const backgroundMusic = new Audio('./Audio/Astrix & Avalon - Moonshine.mp3');
-// const shootSound = new Audio('./Audio/GunShotSnglShotEx PE1097508.mp3');
-// const reloadSound = new Audio('./Audio/GunCockSingle PE1096303.mp3');
-// const deadSound = new Audio('./Audio/Wilhelm Scream sound effect.mp3')
+const backgroundMusic = new Audio('./Audio/Astrix & Avalon - Moonshine.mp3');
+const shootSound = new Audio('./Audio/GunShotSnglShotEx PE1097508.mp3');
+const reloadSound = new Audio('./Audio/GunCockSingle PE1096303.mp3');
+const deadSound = new Audio('./Audio/Wilhelm Scream sound effect.mp3')
 
-const backgroundMusic = new Audio();
-const shootSound = new Audio();
-const reloadSound = new Audio();
-const deadSound = new Audio();
+// const backgroundMusic = new Audio();
+// const shootSound = new Audio();
+// const reloadSound = new Audio();
+// const deadSound = new Audio();
 
 
 
