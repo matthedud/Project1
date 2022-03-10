@@ -125,10 +125,10 @@ function castRay(angle, player, playerCoord) {
 
 function renderScene(rays) {
 	const wallImage = new Image()
-	// wallImage.src =
-		// "./Image/wall/brick-wall-orange-wallpaper-patter_53876-138604.jpg"
+	wallImage.src =
+		"./Image/wall/brick-wall-orange-wallpaper-patter_53876-138604.jpg"
 	// wallImage.src = "./Image/wall/pics/greystone.png"
-	wallImage.src = "./Image/wall/WM_BrickWork-50_1024.png"
+	// wallImage.src = "./Image/wall/WM_BrickWork-50_1024.png"
 
 	const skyImage = new Image()
 	skyImage.src = "./Image/back/panorama_landscapes_175.jpg"
@@ -182,7 +182,14 @@ function renderScene(rays) {
 			ray.player.direction
 		)
 		const wallHeight = ((game.cellheight * 5) / distance) * 277
-
+		ctx.fillStyle = "black"
+		ctx.fillRect(
+			(i * canvasWidth) / numberOfRays / 2,
+			canvasHeight / 2 - wallHeight / 2,
+			canvasWidth / numberOfRays,
+			wallHeight
+		)
+		ctx.globalAlpha = 40 / distance
 		ctx.drawImage(
 			wallImage,
 			ray.imageOffset * wallImage.width,
@@ -194,6 +201,7 @@ function renderScene(rays) {
 			canvasWidth / numberOfRays,
 			wallHeight
 		)
+		ctx.globalAlpha = 1
 
 
 		ctx.fillStyle = colors.floor
