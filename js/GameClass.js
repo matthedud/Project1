@@ -6,6 +6,7 @@ class Game {
 		this.cellWidth = (this.scale * canvasWidth) / grid2D[0].length
 		this.cellheight = (this.scale * canvasHeight) / grid2D.length
 		this.xOffset = canvasWidth / 2 - (canvasWidth * this.scale) / 2
+		this.gameInterval = null
 	}
 	drawMaze(rays) {
 		this.grid2D.forEach((line, lineInd) => {
@@ -78,10 +79,6 @@ class Game {
 	}
 	resetGame() {
 		deadSound.play()
-		// player.name = window.prompt(
-		// 	`${player.name} lost, name him:`,
-		// 	player.name
-		// )
 		for (const keyboard of keyboards) {
 			keyboard.resetKeyboard()
 		}
