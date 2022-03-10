@@ -124,7 +124,14 @@ function startGame(event) {
 			player2.controller = keyboards[1]
 			players.push(player2)
 	}
-	game.frameRate = event.target[5].value < 1 ? 1 : Number(event.target[5].value)
+	else{
+		for (const player of players){
+		const randomCoord = game.randomPlacement()
+			player.xPosition = randomCoord.x
+			player.yPosition = randomCoord.y
+		}
+	}
+	game.frameRate = event.target[5].value > 200 ? 200 : 1/( Number(event.target[5].value)*1000)
 	game.players = players
 	game.runGameLoop()
 	game.chronometer.start(clockEl)
