@@ -285,8 +285,8 @@ function getPlayerPosition(playerLooking, playerSeenList) {
 			playerToPlayerAngle > playerDirection - FOV / 2 &&
 			playerToPlayerAngle < playerDirection + FOV / 2
 		) {
-			const playerWidth = (playerSize * 150) / playerDistance
-			const playerHeight = ((playerSize * 9) / playerDistance) * 277
+			const playerHeight = ((playerSize * 5) / playerDistance) * 277
+			const playerWidth = playerHeight/3
 			const viewAngle = Math.atan(playerWidth / 2 / playerDistance)
 			const initialAngle = playerToPlayerAngle - viewAngle / 2
 			const endAngle = playerToPlayerAngle + viewAngle / 2
@@ -311,7 +311,8 @@ function renderScene(rays) {
 	const skyImage = new Image()
 	skyImage.src = "./Image/back/panorama_landscapes_175.jpg"
 	const gunMan = new Image()
-	gunMan.src = "./Image/player/cowboy.gif"
+	// gunMan.src = "./Image/player/cowboy.gif"
+	gunMan.src = "./Image/player/_Gunman-512.webp"
 	const wallImage = new Image()
 	wallImage.src = "./Image/wall/pics/greystone.png"
 	// wallImage.src = "./Image/wall/WM_BrickWork-50_1024.png"
