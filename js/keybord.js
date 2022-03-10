@@ -20,8 +20,7 @@ document.addEventListener("keydown", keyDownlistener)
 document.addEventListener("keyup", keyUpListener)
 
 function keyDownlistener(event) {
-    console.log('event', event.key);
-	if (!game.gameInterval) {
+	if (!pauseGame) {
 		if (event.key === "ArrowRight" ) keyboards[0].turnRight = true
         if (event.key === "ArrowLeft") keyboards[0].turnLeft = true
 		if (event.key === "ArrowUp")  keyboards[0].up = true
@@ -34,8 +33,9 @@ function keyDownlistener(event) {
         if (event.key === "s") keyboards[1].down = true 
         if (event.key === "a") keyboards[1].shoot = true
 
-        if (event.key === "Escape") showSettings()
+        // 
 	}
+    if (event.key === "Escape") form.className.includes('visible') ?  hideSettings():showSettings()
 }
 
 function keyUpListener(event) {

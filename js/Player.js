@@ -29,6 +29,9 @@ class Player {
 		this.gunImage = new Image()
 		this.gunImage.src = "./Image/gun/PngItem_967910.png"
 		this.gunImageIndex = 0
+		this.shootSound = new Audio('./Audio/GunShotSnglShotEx PE1097508.mp3');
+		this.reloadSound = new Audio('./Audio/GunCockSingle PE1096303.mp3');
+		this.deadSound = new Audio('./Audio/Wilhelm Scream sound effect.mp3')
 	}
 	draw(xOffset) {
 		// ctx.save()
@@ -114,9 +117,9 @@ class Player {
 	}
 	shoot(game) {
 		if (this.canShoot) {
-			shootSound.play()
+			this.shootSound.play()
 			game.shoot(this)
-			setTimeout(() => reloadSound.play(), 200 )
+			setTimeout(() => this.reloadSound.play(), 200 )
 			this.canShoot = false
 			this.shoot(game)
 		} else {

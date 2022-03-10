@@ -7,6 +7,7 @@ class Game {
 		this.cellheight = (this.scale * canvasHeight) / grid2D.length
 		this.xOffset = canvasWidth / 2 - (canvasWidth * this.scale) / 2
 		this.gameInterval = null
+		this.chronometer = new Chronometer()
 	}
 	drawMaze(rays) {
 		this.grid2D.forEach((line, lineInd) => {
@@ -77,8 +78,8 @@ class Game {
 		}
 		return false
 	}
-	resetGame() {
-		deadSound.play()
+	resetGame(player) {
+		player.deadSound.play()
 		for (const keyboard of keyboards) {
 			keyboard.resetKeyboard()
 		}
@@ -182,7 +183,7 @@ class MegaShooter extends Shooter {
 				this.players.push(this.deadPlayers[0])
 				this.deadPlayers.shift()
 			}
-			super.resetGame()
+			super.resetGame(player)
 		}
 	}
 	drawScore() {
