@@ -27,8 +27,8 @@ const colors = {
 	wall: "#013aa6",
 	wallDark: "#012975",
 	rays: "#ffa600",
-	minimapFloor: "rgba(88, 88, 252, 0.3)",
-	minimapWall: "rgba(0, 0, 0, 0.75)",
+	minimapFloor: "rgba(88, 88, 252, 0.5)",
+	minimapWall: "rgba(0, 0, 0, 0.80)",
 	bullet: "black",
 	player: "purple",
 }
