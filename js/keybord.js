@@ -20,7 +20,7 @@ document.addEventListener("keydown", keyDownlistener)
 document.addEventListener("keyup", keyUpListener)
 
 function keyDownlistener(event) {
-	if (game.gameInterval) {
+	if (game?.gameInterval) {
 		if (event.key === "ArrowRight" ) keyboards[0].turnRight = true
         if (event.key === "ArrowLeft") keyboards[0].turnLeft = true
 		if (event.key === "ArrowUp")  keyboards[0].up = true

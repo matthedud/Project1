@@ -124,11 +124,11 @@ function startGame(event) {
 			player2.controller = keyboards[1]
 			players.push(player2)
 	}
+	game.frameRate = event.target[5].value < 1 ? 1 : Number(event.target[5].value)
 	game.players = players
 	game.runGameLoop()
 	game.chronometer.start(clockEl)
-	numberOfRays = event.target[4].value > 2000 ? 2000 : event.target[4].value
-	game.frameRate = event.target[5].value < 1 ? 1 : event.target[5].value
+	numberOfRays = event.target[4].value > 2000 ? 2000 : Number(event.target[4].value)
 }
 
 function randomColor(){
