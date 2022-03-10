@@ -1,4 +1,5 @@
 const bulletVelocity = 9
+const bulletSize = 3
 
 class Bullet {
 	constructor(player, id) {
@@ -8,10 +9,10 @@ class Bullet {
 		this.player = player
 		this.id = id
 	}
-	draw(xOffset) {
+	draw(xOffset, scale) {
 		ctx.fillStyle = colors.bullet
 		ctx.beginPath()
-		ctx.arc(this.xPosition + xOffset, this.yPosition, 1, 0, 2 * Math.PI)
+		ctx.arc(this.xPosition + xOffset, this.yPosition, bulletSize*scale, 0, 2 * Math.PI)
 		ctx.closePath()
 		ctx.fill()
 		ctx.stroke()
