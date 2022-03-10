@@ -104,7 +104,7 @@ function getHCollision(angle, player, playerCoord) {
 	}
 }
 
-function addPlayerRay(playerCoordList, angle, wallDistance){
+function addPlayerRay(playerCoordList, angle, wallDistance) {
 	const playerCoord = playerCoordList[0]
 	if (
 		playerCoord &&
@@ -112,9 +112,11 @@ function addPlayerRay(playerCoordList, angle, wallDistance){
 		angle < playerCoord?.endAngle &&
 		playerCoord?.distance < wallDistance
 	) {
-		const imageOffset = (angle - playerCoord.initialAngle)/(playerCoord.endAngle-playerCoord.initialAngle)
-		return  {...playerCoord, imageOffset}
-}
+		const imageOffset =
+			(angle - playerCoord.initialAngle) /
+			(playerCoord.endAngle - playerCoord.initialAngle)
+		return { ...playerCoord, imageOffset }
+	}
 }
 
 function castRay(angle, player, playerCoord) {
@@ -129,51 +131,41 @@ function renderScene(rays) {
 	// 	"./Image/wall/brick-wall-orange-wallpaper-patter_53876-138604.jpg"
 	wallImage.src = "./Image/wall/pics/greystone.png"
 	// wallImage.src = "./Image/wall/WM_BrickWork-50_1024.png"
+	// wallImage.src = "./Image/wall/pics/mossy.png"
 
 	const skyImage = new Image()
 	skyImage.src = "./Image/back/panorama_landscapes_175.jpg"
-	const floorImage = new Image()
-	floorImage.src = "./Image/back/WM_Marble-125_1024.png"
-	// '../Image/back/panorama_landscapes_175.jpg'
-	
+
 	const gunMan = new Image()
-	// gunMan.src = "./Image/player/stability_officer_sheet_palette.png"
 	gunMan.src = "./Image/player/cowboy.gif"
-	
+
+	const floorGradient = ctx.createLinearGradient(0,0, canvasWidth, canvasHeight);
+	floorGradient.addColorStop(0, colors.floor);
+	floorGradient.addColorStop(.5, 'rgb(44, 44, 44)');
+	floorGradient.addColorStop(1, colors.floor);
+
 	ctx.drawImage(
 		skyImage,
-		game.players[0].direction/(2*Math.PI) * wallImage.width,
+		(game.players[0].direction / (2 * Math.PI)) * skyImage.width,
 		0,
-		wallImage.width * FOV/(2*Math.PI),
-		wallImage.height,
+		(skyImage.width * FOV) / (2 * Math.PI),
+		skyImage.height,
 		0,
 		0,
-		canvasWidth/2,
-		canvasHeight/2
+		canvasWidth / 2,
+		canvasHeight
 	)
-	// ctx.drawImage(
-	// 	floorImage,
-	// 	game.players[0].direction/(2*Math.PI) * floorImage.width,
-	// 	0,
-	// 	floorImage.width * FOV/(2*Math.PI),
-	// 	floorImage.height,
-	// 	0,
-	// 	canvasHeight/2,
-	// 	canvasWidth/2,
-	// 	canvasHeight
-	// )
 	ctx.drawImage(
 		skyImage,
-		game.players[1].direction/(2*Math.PI) * wallImage.width,
+		(game.players[1].direction / (2 * Math.PI)) * skyImage.width,
 		0,
-		wallImage.width * FOV/(2*Math.PI),
-		wallImage.height,
-		canvasWidth/2,
+		(skyImage.width * FOV) / (2 * Math.PI),
+		skyImage.height,
+		canvasWidth / 2,
 		0,
 		canvasWidth,
-		canvasHeight/2
+		canvasHeight
 	)
-
 
 	rays.forEach((ray, i) => {
 		const distance = fixFishEye(
@@ -182,14 +174,14 @@ function renderScene(rays) {
 			ray.player.direction
 		)
 		const wallHeight = ((game.cellheight * 5) / distance) * 277
-		ctx.fillStyle = "black"
-		ctx.fillRect(
-			(i * canvasWidth) / numberOfRays / 2,
-			canvasHeight / 2 - wallHeight / 2,
-			canvasWidth / numberOfRays,
-			wallHeight
-		)
-		ctx.globalAlpha = 40 / distance
+			ctx.fillStyle = "black"
+			ctx.fillRect(
+				(i * canvasWidth) / numberOfRays / 2,
+				canvasHeight / 2 - wallHeight / 2,
+				canvasWidth / numberOfRays,
+				wallHeight
+			)
+		ctx.globalAlpha = (ray.vertical? 1 :  0.5 )
 		ctx.drawImage(
 			wallImage,
 			ray.imageOffset * wallImage.width,
@@ -199,12 +191,22 @@ function renderScene(rays) {
 			(i * canvasWidth) / numberOfRays / 2,
 			canvasHeight / 2 - wallHeight / 2,
 			canvasWidth / numberOfRays,
-			wallHeight
+			wallHeight/2
+		)
+		ctx.drawImage(
+			wallImage,
+			ray.imageOffset * wallImage.width,
+			0,
+			1,
+			wallImage.height,
+			(i * canvasWidth) / numberOfRays / 2,
+			canvasHeight / 2 ,
+			canvasWidth / numberOfRays,
+			wallHeight/2
 		)
 		ctx.globalAlpha = 1
 
-
-		ctx.fillStyle = colors.floor
+		ctx.fillStyle = floorGradient
 		ctx.fillRect(
 			((i / 2) * canvasWidth) / numberOfRays,
 			canvasHeight / 2 + wallHeight / 2,
@@ -237,21 +239,19 @@ function renderScene(rays) {
 		canvasHeight
 	)
 
-
-	for(const player of game.players){
+	for (const player of game.players) {
 		ctx.drawImage(
 			player.gunImage,
 			player.gunImageIndex,
 			50,
 			100,
 			200,
-			(canvasWidth / 4) - 50 + player.index * (2 * canvasWidth) / 4,
+			canvasWidth / 4 - 50 + (player.index * (2 * canvasWidth)) / 4,
 			(3 * canvasHeight) / 5,
 			canvasWidth / 5,
 			canvasWidth / 3
 		)
 	}
-
 }
 
 function fixFishEye(distance, angle, playerToPlayerAngle) {
@@ -277,14 +277,14 @@ function getPlayerToPlayerAngle(playerLooking, playerSeen) {
 		playerSeen.yPosition - playerLooking.yPosition,
 		playerSeen.xPosition - playerLooking.xPosition
 	)
-	const playerToPlayerAngle = tanAngle + Math.PI * 2 * (tanAngle<0)
+	const playerToPlayerAngle = tanAngle + Math.PI * 2 * (tanAngle < 0)
 	return playerToPlayerAngle
 }
 
 function getPlayerPosition(playerLooking, playerSeenList) {
 	const playerDirection = playerLooking.direction
 	const result = []
-	for(const playerSeen of playerSeenList){
+	for (const playerSeen of playerSeenList) {
 		const playerDistance = distance(
 			playerLooking.xPosition,
 			playerLooking.yPosition,
@@ -304,13 +304,13 @@ function getPlayerPosition(playerLooking, playerSeenList) {
 			const viewAngle = Math.atan(playerWidth / 2 / playerDistance)
 			const initialAngle = playerToPlayerAngle - viewAngle / 2
 			const endAngle = playerToPlayerAngle + viewAngle / 2
-			result.push( {
+			result.push({
 				initialAngle,
 				endAngle,
 				distance: playerDistance,
 				height: playerHeight,
 				width: playerWidth,
-				player:playerSeen,
+				player: playerSeen,
 			})
 		}
 	}
