@@ -6,7 +6,6 @@ class Game {
 		this.cellWidth = (this.scale * canvasWidth) / grid2D[0].length
 		this.cellheight = (this.scale * canvasHeight) / grid2D.length
 		this.xOffset = canvasWidth / 2 - (canvasWidth * this.scale) / 2
-		this.gameInterval = null
 	}
 	drawMaze(rays) {
 		this.grid2D.forEach((line, lineInd) => {
