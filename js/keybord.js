@@ -5,12 +5,14 @@ class KeyBoard {
         this.down=false
         this.turnRight=false
         this.turnLeft=false
+        this.shoot=false
     }
     resetKeyboard(){
         this.up=false
         this.down=false
         this.turnRight=false
         this.turnLeft=false
+        this.shoot=false
     }
 }
 
@@ -34,7 +36,6 @@ function keyDownlistener(event) {
 }
 
 function keyUpListener(event) {
-	if (!pauseGame) {
         if (event.key === "ArrowRight" ) keyboards[0].turnRight = false
         if (event.key === "ArrowLeft") keyboards[0].turnLeft = false
 		if (event.key === "ArrowUp")  keyboards[0].up = false
@@ -46,5 +47,4 @@ function keyUpListener(event) {
 		if (event.key === "z") keyboards[1].up = false
         if (event.key === "s") keyboards[1].down = false 
         if (event.key === "a") keyboards[1].shoot = false
-	}
 }

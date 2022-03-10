@@ -1,6 +1,7 @@
 
 *{
     box-sizing: border-box;
+    font-family: 'Comfortaa', cursive;
 }
 
 body{
@@ -8,7 +9,20 @@ body{
     flex-direction: column;
     justify-content: center;
     align-content: center;
-    background: url('../Image/back/WM_Marble-125_1024.png');
+    background-image: url(../Image/Floor/FloorTreadPattern-3v2_UR_1024.png);
+}
+
+h1{
+    color: rgb(255, 242, 240);
+    font-size: 3rem;
+    text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+    /* background-color: aliceblue; */
+}
+h2{
+    text-decoration: underline;
+}
+button{
+    font-weight: 700;
 }
 
 #game{
@@ -25,6 +39,7 @@ canvas{
 }
 
 .modal{
+    background-size: contain;
     display: flex;
     flex-direction: column;
     visibility: hidden;
@@ -37,7 +52,7 @@ canvas{
     min-width: 200px;
     padding: 25px;
     border: 1px black solid ;
-    background-color: antiquewhite;
+    background-color: rgb(255, 250, 224);
     margin-left: auto;
     margin-right: auto;
 }
@@ -92,7 +107,7 @@ header{
 }
 
 .player{
-    background: url("../Image/playerzz/2162179.svg");
+    background: url("../Image/player/demon-avatar.svg");
 }
 .icon{
     background-size: cover;

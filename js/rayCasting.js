@@ -126,10 +126,13 @@ function castRay(angle, player, playerCoord) {
 function renderScene(rays) {
 	const wallImage = new Image()
 	// wallImage.src =
-	// 	"./Image/brick-wall-orange-wallpaper-patter_53876-138604.jpg"
-	wallImage.src = "./Image/wall/pics/greystone.png"
+		// "./Image/wall/brick-wall-orange-wallpaper-patter_53876-138604.jpg"
+	// wallImage.src = "./Image/wall/pics/greystone.png"
+	wallImage.src = "./Image/wall/WM_BrickWork-50_1024.png"
+	
 	const gunMan = new Image()
-	gunMan.src = "./Image/player/stability_officer_sheet_palette.png"
+	// gunMan.src = "./Image/player/stability_officer_sheet_palette.png"
+	gunMan.src = "./Image/player/cowboy.gif"
 	
 	rays.forEach((ray, i) => {
 		const distance = fixFishEye(
@@ -151,13 +154,6 @@ function renderScene(rays) {
 			wallHeight
 		)
 
-		// ctx.fillStyle = ray.vertical ? colors.wall : colors.wallDark
-		// ctx.fillRect(
-		// 	((i / 2) * canvasWidth) / numberOfRays,
-		// 	canvasHeight / 2 - wallHeight / 2,
-		// 	canvasWidth / numberOfRays,
-		// 	wallHeight
-		// )
 
 		ctx.fillStyle = colors.floor
 		ctx.fillRect(
@@ -169,22 +165,15 @@ function renderScene(rays) {
 		ctx.fillStyle = "black"
 
 		if (ray.playerRay) {
-			// const y = ray.playerRay.imageOffset * gunMan.width
-			// console.log('imageOffset', y);
-			// ctx.drawImage(
-			// 	gunMan,
-			// 	y,
-			// 	0,
-			// 	1,
-			// 	ray.playerRay.height,
-			// 	(i * canvasWidth) / numberOfRays / 2,
-			// 	canvasHeight / 2 - ray.playerRay.height / 2,
-			// 	canvasWidth / numberOfRays,
-			// 	ray.playerRay.height
-			// )
-			ctx.fillRect(
-				((i / 2) * canvasWidth) / numberOfRays,
-				canvasHeight / 2 - ray.playerRay.height / 7 ,
+			const x = ray.playerRay.imageOffset * gunMan.width
+			ctx.drawImage(
+				gunMan,
+				x,
+				0,
+				1,
+				gunMan.height,
+				(i * canvasWidth) / numberOfRays / 2,
+				canvasHeight / 2 - ray.playerRay.height / 5,
 				canvasWidth / numberOfRays,
 				ray.playerRay.height
 			)
@@ -200,22 +189,19 @@ function renderScene(rays) {
 	)
 
 
-	const gunImage = new Image()
-	gunImage.src = "./Image/gun/gun.png"
-	ctx.drawImage(
-		gunImage,
-		canvasWidth / 4,
-		(3 * canvasHeight) / 5,
-		canvasWidth / 5,
-		canvasWidth / 5
-	)
-	ctx.drawImage(
-		gunImage,
-		(3 * canvasWidth) / 4,
-		(3 * canvasHeight) / 5,
-		canvasWidth / 5,
-		canvasWidth / 5
-	)
+	for(const player of game.players){
+		ctx.drawImage(
+			player.gunImage,
+			player.gunImageIndex,
+			50,
+			100,
+			200,
+			(canvasWidth / 4) - 50 + player.index * (2 * canvasWidth) / 4,
+			(3 * canvasHeight) / 5,
+			canvasWidth / 5,
+			canvasWidth / 3
+		)
+	}
 
 }
 
@@ -264,7 +250,7 @@ function getPlayerPosition(playerLooking, playerSeenList) {
 			playerToPlayerAngle > playerDirection - FOV / 2 &&
 			playerToPlayerAngle < playerDirection + FOV / 2
 		) {
-			const playerWidth = (playerSize * 90) / playerDistance
+			const playerWidth = (playerSize * 100) / playerDistance
 			const playerHeight = ((playerSize * 9) / playerDistance) * 277
 			const viewAngle = Math.atan(playerWidth / 2 / playerDistance)
 			const initialAngle = playerToPlayerAngle - viewAngle / 2

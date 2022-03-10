@@ -4,20 +4,29 @@
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Document</title>
+		<title>The Game</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa&display=swap" rel="stylesheet">
 		<link rel="stylesheet" href="./styles/app.css" />
 	</head>
 	<body>
 		<header>
 			<h1>The Game</h1>
 			<div class="button-groupe">
-				<button id="btn-settings" class="btn-settings" >Settings</button>
-				<button id="btn-controlers" class="btn-settings" disabled = "true">Controlers</button>
+				<button id="btn-settings" class="btn-settings">Settings</button>
+				<button
+					id="btn-controlers"
+					class="btn-settings"
+					disabled="true"
+				>
+					Controlers
+				</button>
 			</div>
 		</header>
 		<div id="game"></div>
 		<form action="" id="form" class="modal visible">
-			<h1>Settings</h1>
+			<h2>Settings</h2>
 			<label for="game-choice">Select Game</label>
 			<select id="game-choice" type="text" required>
 				<option value="1">2 Shooter</option>
@@ -25,9 +34,21 @@
 				<option value="3">megaMulti</option>
 			</select>
 			<label for="player1Name">Player 1 Name</label>
-			<input type="text" id="player1Name" class="text-input" value='Bill' required />
+			<input
+				type="text"
+				id="player1Name"
+				class="text-input"
+				value="Bill"
+				required
+			/>
 			<label for="player2Name">Player 2 Name</label>
-			<input type="text" id="player2Name" class="text-input" value='Bob' required />
+			<input
+				type="text"
+				id="player2Name"
+				class="text-input"
+				value="Bob"
+				required
+			/>
 			<label for="map">Select Map</label>
 			<select id="map" type="text" required>
 				<option value="0">Map 1</option>
@@ -35,7 +56,13 @@
 				<!-- <option value="2">Map 3</option> -->
 			</select>
 			<label for="resolution">Résolition (max 2000)</label>
-			<input type="number" id="resolution" class="number-input" value='300' required />
+			<input
+				type="number"
+				id="resolution"
+				class="number-input"
+				value="300"
+				required
+			/>
 
 			<button id="btn-start" type="submit" value="Submit">
 				restart game
@@ -43,7 +70,7 @@
 			<button id="btn-cl">Cancel</button>
 		</form>
 		<div id="controler-setup" class="modal">
-			<h1>Controller Assigns</h1>
+			<h2>Controller Assigns</h2>
 			<div id="controller-container">
 				<div id="player-liste"></div>
 				<div id="controller-liste"></div>

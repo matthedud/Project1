@@ -24,8 +24,25 @@ class Player {
 		this.canShoot = true
 		this.role = role
 		this.score = 0
+		this.playerTopImage = new Image()
+		this.playerTopImage.src = "./Image/player/topgun.gif"
+		this.gunImage = new Image()
+		this.gunImage.src = "./Image/gun/PngItem_967910.png"
+		this.gunImageIndex = 0
 	}
 	draw(xOffset) {
+		// ctx.save()
+		// ctx.translate(this.xPosition + xOffset , this.yPosition )
+		// ctx.rotate(this.direction)
+		// ctx.drawImage(
+		// 	this.playerTopImage,
+		// 	-( playerSize * 2.5),
+		// 	-( playerSize * 2.5),
+		// 	playerSize * 5,
+		// 	playerSize * 5
+		// )
+		// ctx.restore()
+
 		const xDirection =
 			this.xPosition + Math.cos(this.direction) * playerSize
 		const yDirection =
@@ -55,25 +72,29 @@ class Player {
 			this.yPosition - 18
 		)
 	}
-	setMove(maze){
-		if(this.controller){
-			if (this.controller.id[0] ==='K') {
-				if(this.controller.up){
+	setMove(maze) {
+		if (this.controller) {
+			if (this.controller.id[0] === "K") {
+				if (this.controller.up) {
 					const newXposition = Math.cos(this.direction) * moveSpeed
 					const newYposition = Math.sin(this.direction) * moveSpeed
 					this.move(maze, newXposition, newYposition)
-				}else if(this.controller.down){
+				} else if (this.controller.down) {
 					const newXposition = -Math.cos(this.direction) * moveSpeed
 					const newYposition = -Math.sin(this.direction) * moveSpeed
 					this.move(maze, newXposition, newYposition)
 				}
-				if(this.controller.turnRight) this.rotate(turnSpeed, maze)
-				else if(this.controller.turnLeft) this.rotate(-turnSpeed, maze)
-				if (this.controller.shoot) game.shoot(this)
-			}else {
+				if (this.controller.turnRight) this.rotate(turnSpeed, maze)
+				else if (this.controller.turnLeft) this.rotate(-turnSpeed, maze)
+				if (this.controller.shoot) {
+					if (this.canShoot) {
+						game.shoot(this)
+						this.shoot()
+						this.canShoot = false
+					}
+				}
+			} else {
 				const gp = navigator.getGamepads()[this.controller?.index]
-				console.log('gp', gp);
-				console.log('index', this.controller?.index);
 				const newXposition =
 					-Math.cos(this.direction) *
 					moveSpeed *
@@ -89,9 +110,26 @@ class Player {
 				const newRotate = turnSpeed * gp.axes[2]
 				this.rotate(newRotate, maze)
 				// this.direction = Math.atan(gp.axes[3], gp.axes[2])
-				if (gp.buttons[7].pressed) game.shoot(this)
+				if (gp.buttons[7].pressed) {
+					if (this.canShoot) {
+						game.shoot(this)
+						this.shoot()
+						this.canShoot = false
+					}
+				}
 			}
 		}
+	}
+	shoot() {
+		setTimeout(() => {
+			if (this.gunImageIndex > 400) {
+				this.canShoot = true
+				this.gunImageIndex = 0
+			} else {
+				this.gunImageIndex += 110
+				this.shoot()
+			}
+		}, 150)
 	}
 
 	// controlerMove(maze) {

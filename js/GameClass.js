@@ -58,11 +58,11 @@ class Game {
 			return true
 		return this.grid2D[lineIndex][cellIndex]
 	}
-	randomPlacement(){
-		const y = (Math.random()* this.grid2D.length) * this.cellheight
-		const x = (Math.random()* this.grid2D[0].length) * this.cellWidth
-		if(this.isWall(x, y)) return this.randomPlacement()
-		return {x, y}
+	randomPlacement() {
+		const y = Math.random() * this.grid2D.length * this.cellheight
+		const x = Math.random() * this.grid2D[0].length * this.cellWidth
+		if (this.isWall(x, y)) return this.randomPlacement()
+		return { x, y }
 	}
 	isPlayer(x, y, viewingPlayer) {
 		for (const player of this.players) {
@@ -77,11 +77,11 @@ class Game {
 		}
 		return false
 	}
-	resetGame(){
-		for (const keyboard of keyboards){
+	resetGame() {
+		for (const keyboard of keyboards) {
 			keyboard.resetKeyboard()
 		}
-		for(const player of this.players){
+		for (const player of this.players) {
 			const coord = this.randomPlacement()
 			player.xPosition = coord.x
 			player.yPosition = coord.y
@@ -98,14 +98,14 @@ class Game {
 			player.setMove(game)
 		}
 		this.drawMaze(wallRays)
-		if (!pauseGame) window.requestAnimationFrame(()=>this.runGameLoop())
+		if (!pauseGame) window.requestAnimationFrame(() => this.runGameLoop())
 	}
 }
 
 class Shooter extends Game {
 	constructor(grid2D, players) {
 		super(grid2D, players)
-		this.type = 'shooter'
+		this.type = "shooter"
 		this.bullets = []
 		this.bulletCounter = 0
 	}
@@ -115,14 +115,12 @@ class Shooter extends Game {
 			const bullet = new Bullet(player, this.bulletCounter)
 			this.bullets.push(bullet)
 			bullet.move(this)
-			player.canShoot = false
-			setTimeout(() => (player.canShoot = true), 500)
 		}
 	}
-	drawScore(){
-		ctx.font = '48px serif';
-		ctx.fillText(this.players[0].score, 10, 50);
-		ctx.fillText(this.players[1].score, canvasWidth-40, 50);
+	drawScore() {
+		ctx.font = "48px serif"
+		ctx.fillText(this.players[0].score, 10, 50)
+		ctx.fillText(this.players[1].score, canvasWidth - 40, 50)
 	}
 	drawMaze(rays) {
 		super.drawMaze(rays)
@@ -137,7 +135,7 @@ class Tag extends Game {
 	constructor(grid2D, players) {
 		super(grid2D, players)
 		this.timer = 0
-		this.type = 'tag'
+		this.type = "tag"
 		this.cat = null
 	}
 	runGameLoop() {
@@ -149,25 +147,58 @@ class Tag extends Game {
 			player.setMove(game)
 		}
 		this.drawMaze(wallRays)
-		if (!pauseGame) window.requestAnimationFrame(()=>this.runGameLoop())
+		if (!pauseGame) window.requestAnimationFrame(() => this.runGameLoop())
 	}
 }
 
 class MegaShooter extends Shooter {
 	constructor(grid2D, players) {
 		super(grid2D, players)
-		this.type = 'megaShooter'
+		this.type = "megaShooter"
+		this.deadPlayers = []
 		this.scale = 1
 		this.cellWidth = (this.scale * canvasWidth) / grid2D[0].length
 		this.cellheight = (this.scale * canvasHeight) / grid2D.length
 		this.xOffset = canvasWidth / 2 - (canvasWidth * this.scale) / 2
 	}
+
 	runGameLoop() {
 		clearCanvas()
 		for (const player of this.players) {
 			player.setMove(game)
 		}
 		this.drawMaze()
-		if (!pauseGame) window.requestAnimationFrame(()=>this.runGameLoop())
+		if (!pauseGame) window.requestAnimationFrame(() => this.runGameLoop())
+	}
+	resetGame(player) {
+		const index = this.players.findIndex(el=>el.id===player.id)
+		this.players.splice(index, 1)
+		this.deadPlayers.push(player)
+		if (this.players.length < 2) {
+			this.players[0].score += 5
+			const length = this.deadPlayers.length
+			for (let i=0; i< length; i++) {
+				this.players.push(this.deadPlayers[0])
+				this.deadPlayers.shift()
+			}
+			super.resetGame()
+		}
+	}
+	drawScore() {
+		ctx.font = "48px serif"
+		for (let i = 0; i < this.players.length; i++) {
+			ctx.fillText(
+				`${this.players[i].score} - ${this.players[i].name}`,
+				10,
+				50 + i * 50
+			)
+		}
+		for (let i = 0; i < this.deadPlayers.length; i++) {
+			ctx.fillText(
+				`${this.deadPlayers[i].score} - ${this.deadPlayers[i].name}`,
+				canvasWidth - 100,
+				50 + i * 50
+			)
+		}
 	}
 }

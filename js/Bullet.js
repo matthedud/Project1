@@ -28,7 +28,7 @@ class Bullet {
                 `${player.name} lost, name him:`,
                 player.name
             )
-			maze.resetGame()
+			maze.resetGame(player)
 		} else if (!maze.isWall(newXposition, newYposition)) {
 			this.xPosition = newXposition
 			this.yPosition = newYposition
