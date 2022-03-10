@@ -128,7 +128,7 @@ function castRay(angle, player, playerCoord) {
 function drawDynamicBackgroung(player1Direction, player2Direction, skyImage) {
 	ctx.drawImage(
 		skyImage,
-		(playerDirection / (2 * Math.PI)) * skyImage.width,
+		(player1Direction / (2 * Math.PI)) * skyImage.width,
 		0,
 		(skyImage.width * FOV) / (2 * Math.PI),
 		skyImage.height,
@@ -140,7 +140,7 @@ function drawDynamicBackgroung(player1Direction, player2Direction, skyImage) {
 
 	ctx.drawImage(
 		skyImage,
-		(game.players[1].direction / (2 * Math.PI)) * skyImage.width,
+		(player2Direction / (2 * Math.PI)) * skyImage.width,
 		0,
 		(skyImage.width * FOV) / (2 * Math.PI),
 		skyImage.height,
@@ -164,7 +164,7 @@ function setFloorGradient() {
 	return floorGradient
 }
 
-function drawWallRay(wallImage, ray, wallHeight) {
+function drawWallRay(wallImage, ray, wallHeight, i) {
 	if (!ray.vertical) {
 		ctx.fillStyle = "black"
 		ctx.fillRect(
@@ -200,7 +200,7 @@ function drawWallRay(wallImage, ray, wallHeight) {
 	ctx.globalAlpha = 1
 }
 
-function drawPlayerRay(ray, gunMan){
+function drawPlayerRay(ray, gunMan, i){
 	const x = ray.playerRay.imageOffset * gunMan.width
 	ctx.drawImage(
 		gunMan,
@@ -215,7 +215,7 @@ function drawPlayerRay(ray, gunMan){
 	)
 }
 
-function drawFloorRay(floorGradient, wallHeight){
+function drawFloorRay(floorGradient, wallHeight, i){
 	ctx.fillStyle = floorGradient
 	ctx.fillRect(
 		((i / 2) * canvasWidth) / numberOfRays,
@@ -265,11 +265,11 @@ function renderScene(rays) {
 		)
 		const wallHeight = ((game.cellheight * 5) / distance) * 277
 
-		drawWallRay(wallImage, ray, wallHeight)
+		drawWallRay(wallImage, ray, wallHeight, i)
 
-		drawFloorRay(floorGradient, wallHeight)
+		drawFloorRay(floorGradient, wallHeight, i)
 
-		if (ray.playerRay) drawPlayerRay(ray, gunMan)
+		if (ray.playerRay) drawPlayerRay(ray, gunMan, i)
 	})
 
 	ctx.fillStyle = "black"
