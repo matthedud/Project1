@@ -1,6 +1,6 @@
 const playerSize = 6
 const turnSpeed = 0.08
-const moveSpeed = 1
+let moveSpeed = 1
 const FOV = (30 * Math.PI) / 180
 
 class Player {

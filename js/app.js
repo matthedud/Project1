@@ -96,10 +96,10 @@ function startGame(event) {
 			game = new Shooter(map)
 			break
 		case "2":
-			game = new Tag(map)
+			game = new MegaShooter(map)
 			break
 		case "3":
-			game = new MegaShooter(map)
+			game = new Tag(map)
 			break
 	}
 	if (players.length <1) {
@@ -137,6 +137,7 @@ function startGame(event) {
 		}
 	}
 	game.frameRate = event.target[5].value > 200 ? 200 : (1/ Number(event.target[5].value)*1000)
+	moveSpeed = Math.abs(event.target[9].value) > 100 ? 100 : Number(event.target[9].value/10)
 	game.players = players
 	game.runGameLoop()
 	game.chronometer.start(clockEl)
