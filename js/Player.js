@@ -1,5 +1,5 @@
 const playerSize = 6
-const turnSpeed = 0.1
+const turnSpeed = 0.08
 const moveSpeed = 1
 const FOV = (30 * Math.PI) / 180
 
@@ -95,19 +95,19 @@ class Player {
 				const newXposition =
 					-Math.cos(this.direction) *
 					moveSpeed *
-					Number(gp.axes[1].toFixed(1))* 0.8
+					Number(gp.axes[1].toFixed(1))
 				const newYposition =
 					-Math.sin(this.direction) *
 					moveSpeed *
-					Number(gp.axes[1].toFixed(1))* 0.8
+					Number(gp.axes[1].toFixed(1))
 				const xStrafe =
 					-Math.cos(this.direction - Math.PI / 2) *
 					moveSpeed *
-					Number(gp.axes[0].toFixed(1))* 0.8
+					Number(gp.axes[0].toFixed(1))
 				const yStrafe =
 					-Math.sin(this.direction - Math.PI / 2) *
 					moveSpeed *
-					Number(gp.axes[0].toFixed(1))* 0.8
+					Number(gp.axes[0].toFixed(1))
 				this.move(maze, newXposition + xStrafe, newYposition + yStrafe)
 				const newRotate = turnSpeed * gp.axes[2]
 				this.rotate(newRotate, maze)
