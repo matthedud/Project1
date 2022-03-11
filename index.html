@@ -62,8 +62,8 @@
 			<label for="game-choice">Select Game</label>
 			<select id="game-choice" type="text" required>
 				<option value="1">2 Shooter</option>
-				<option value="2">Tag</option>
-				<option value="3">megaMulti</option>
+				<option value="2">megaMulti</option>
+				<!-- <option value="3">Tag</option> -->
 			</select>
 			<label for="player1Name">Player 1 Name</label>
 			<input
@@ -131,10 +131,18 @@
 				<option value="2">shadow</option>
 				<!-- <option value="2">Map 3</option> -->
 			</select>
-			<label for="playerSpeed">Player Speed</label>
+			<label for="playerSpeed">Player Move Speed</label>
 			<input
 				type="number"
 				id="playerSpeed"
+				class="number-input"
+				value="10"
+				required
+			/>
+			<label for="turnSpeed">Player Turn Speed</label>
+			<input
+				type="number"
+				id="turnSpeed"
 				class="number-input"
 				value="10"
 				required

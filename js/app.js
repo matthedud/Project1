@@ -138,6 +138,7 @@ function startGame(event) {
 	}
 	game.frameRate = event.target[5].value > 200 ? 200 : (1/ Number(event.target[5].value)*1000)
 	moveSpeed = Math.abs(event.target[9].value) > 100 ? 100 : Number(event.target[9].value/10)
+	turnSpeed = Math.abs(event.target[10].value) > 30 ? 30 : (Number(event.target[10].value) * Math.PI) / 180
 	game.players = players
 	game.runGameLoop()
 	game.chronometer.start(clockEl)
