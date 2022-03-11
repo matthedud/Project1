@@ -95,19 +95,19 @@ class Player {
 				const newXposition =
 					-Math.cos(this.direction) *
 					moveSpeed *
-					Number(gp.axes[1].toFixed(1))
+					Number(gp.axes[1].toFixed(1))* 0.8
 				const newYposition =
 					-Math.sin(this.direction) *
 					moveSpeed *
-					Number(gp.axes[1].toFixed(1))
+					Number(gp.axes[1].toFixed(1))* 0.8
 				const xStrafe =
 					-Math.cos(this.direction - Math.PI / 2) *
 					moveSpeed *
-					Number(gp.axes[0].toFixed(1))
+					Number(gp.axes[0].toFixed(1))* 0.8
 				const yStrafe =
 					-Math.sin(this.direction - Math.PI / 2) *
 					moveSpeed *
-					Number(gp.axes[0].toFixed(1))
+					Number(gp.axes[0].toFixed(1))* 0.8
 				this.move(maze, newXposition + xStrafe, newYposition + yStrafe)
 				const newRotate = turnSpeed * gp.axes[2]
 				this.rotate(newRotate, maze)
